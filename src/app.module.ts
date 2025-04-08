@@ -25,7 +25,7 @@ dotenv.config();
         port: configService.get<number>('DB_PORT'),
         database: configService.get<string>('DATABASE'),
         entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-        synchronize: false, // process.env.NODE_ENV === 'development'
+        synchronize: process.env.NODE_ENV === 'DEVELOPMENT',
       }),
     }),
     StoreModule,
