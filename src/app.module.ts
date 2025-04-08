@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
+import { StoreModule } from './modules/store/store.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -24,9 +25,10 @@ dotenv.config();
         port: configService.get<number>('DB_PORT'),
         database: configService.get<string>('DATABASE'),
         entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-        synchronize: process.env.NODE_ENV === 'development',
+        synchronize: false, // process.env.NODE_ENV === 'development'
       }),
     }),
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
