@@ -1,4 +1,4 @@
 export enum StoreTypeEnum {
     PDV = 'pdv',
-    LOJA = 'LOJA'
+    LOJA = 'loja'
 }

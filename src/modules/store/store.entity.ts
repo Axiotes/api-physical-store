@@ -31,6 +31,9 @@ export class Store {
   state: string;
 
   @Column()
+  uf: string;
+
+  @Column()
   region: string;
 
   @Column()
