@@ -1,4 +1,4 @@
-import { StoreTypeEnum } from 'src/common/enums/store-type.enum';
+import { StoreTypeEnum } from '../../common/enums/store-type.enum';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

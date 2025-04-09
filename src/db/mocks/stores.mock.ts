@@ -1,5 +1,5 @@
-import { StoreTypeEnum } from "src/common/enums/store-type.enum";
-import { Store } from "src/common/interfaces/store.interface";
+import { StoreTypeEnum } from "../../common/enums/store-type.enum";
+import { Store } from "../../common/interfaces/store.interface";
 
 export const STORES: Store[] = [
   {

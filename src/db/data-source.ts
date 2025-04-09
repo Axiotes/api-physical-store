@@ -2,6 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { MainSeeder } from './seeders/main-seeder';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const dataSourceOptions = {
   entities: [path.resolve(__dirname, '../**/*.entity.{ts,js}')],
   synchronize: false,
   logging: true,
-  seeds: [],
+  seeds: [MainSeeder],
   migrations: [path.resolve(__dirname, './migrations/*.{ts,js}')],
 } as DataSourceOptions & SeederOptions;
 
