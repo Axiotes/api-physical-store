@@ -8,10 +8,8 @@ import { ViaCepResponse } from 'src/common/interfaces/via-cep-response.interface
 export class ViaCepApiService {
   constructor(private readonly httpService: HttpService) {}
 
-  public viaCep(
-    cep: string,
-  ): Observable<AxiosResponse<ViaCepResponse | { error: boolean }>> {
-    return this.httpService.get<ViaCepResponse | { error: boolean }>(
+  public viaCep(cep: string): Observable<AxiosResponse<ViaCepResponse>> {
+    return this.httpService.get<ViaCepResponse>(
       `https://viacep.com.br/ws/${cep}/json`,
     );
   }

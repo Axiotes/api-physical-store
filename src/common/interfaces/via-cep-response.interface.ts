@@ -12,4 +12,5 @@ export interface ViaCepResponse {
   gia: string;
   ddd: string;
   siafi: string;
+  error?: boolean;
 }

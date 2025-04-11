@@ -5,8 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { StoreModule } from './modules/store/store.module';
-import { GoogleApisService } from './common/requests/google-apis/google-apis.service';
 import { RequestsModule } from './common/requests/requests.module';
+import { UtilsModule } from './common/utils/utils.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -32,6 +32,7 @@ dotenv.config();
     }),
     StoreModule,
     RequestsModule,
+    UtilsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
