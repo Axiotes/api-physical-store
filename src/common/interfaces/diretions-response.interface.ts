@@ -3,6 +3,7 @@ import { LatLng } from './lat-lng.interface';
 export interface DirectionsResponse {
   geocoded_waypoints: GeocodedWaypoint[];
   routes: Route[];
+  status: string;
 }
 
 interface GeocodedWaypoint {

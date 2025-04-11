@@ -1,12 +1,66 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
 import { Repository } from 'typeorm';
+import { GeoUtilsService } from 'src/common/utils/geo-utils/geo-utils.service';
+import { GoogleApisService } from 'src/common/requests/google-apis/google-apis.service';
+import { StoreInterface } from 'src/common/interfaces/store.interface';
+import { lastValueFrom } from 'rxjs';
+import { DirectionsResponse } from 'src/common/interfaces/diretions-response.interface';
+import { StoreRoute } from 'src/common/interfaces/store-route.interface';
 
 @Injectable()
 export class StoreService {
   constructor(
     @InjectRepository(Store)
     private readonly storeRepository: Repository<Store>,
+    private readonly geoUtilsService: GeoUtilsService,
+    private readonly googleApisService: GoogleApisService,
   ) {}
+
+  public async closerStores(cep: string): Promise<StoreRoute[]> {
+    try {
+      const address: string = await this.geoUtilsService.getAddress(cep);
+      const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
+      const stores: StoreInterface[] = await this.storeRepository.find();
+
+      let closerStores: StoreRoute[] = [];
+
+      for (let i = 0; i < stores.length; i++) {
+        const store = stores[i];
+
+        const res = await lastValueFrom(
+          this.googleApisService.directions(
+            { lat, lng },
+            { lat: Number(store.lat), lng: Number(store.lng) },
+          ),
+        );
+
+        const data: DirectionsResponse = res.data;
+
+        if (!data || data.status === 'ZERO_RESULTS') {
+          continue;
+        }
+
+        const distance = data.routes[0].legs[0].distance;
+        const duration = data.routes[0].legs[0].duration;
+
+        if (distance.value <= 100000) {
+          closerStores.push({
+            store,
+            distance,
+            duration,
+          });
+        }
+      }
+
+      closerStores = closerStores.sort(
+        (a, b) => a.distance.value - b.distance.value,
+      );
+
+      return closerStores;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

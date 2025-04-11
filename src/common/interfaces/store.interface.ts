@@ -1,6 +1,6 @@
 import { StoreTypeEnum } from '../enums/store-type.enum';
 
-export interface Store {
+export interface StoreInterface {
   id: number;
   type: StoreTypeEnum;
   name: string;

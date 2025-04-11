@@ -1,7 +1,7 @@
-import { StoreTypeEnum } from "../../common/enums/store-type.enum";
-import { Store } from "../../common/interfaces/store.interface";
+import { StoreTypeEnum } from '../../common/enums/store-type.enum';
+import { StoreInterface } from '../../common/interfaces/store.interface';
 
-export const STORES: Store[] = [
+export const STORES: StoreInterface[] = [
   {
     id: 1,
     type: StoreTypeEnum.PDV,
@@ -14,8 +14,8 @@ export const STORES: Store[] = [
     state: 'Pernambuco',
     uf: 'PE',
     region: 'Nordeste',
-    lat: "-8.060341648575207",
-    lng: "-34.8808194489028",
+    lat: '-8.060341648575207',
+    lng: '-34.8808194489028',
   },
   {
     id: 2,
@@ -29,8 +29,8 @@ export const STORES: Store[] = [
     state: 'Pernambuco',
     uf: 'PE',
     region: 'Nordeste',
-    lat: "-8.122589883073196",
-    lng: "-34.90342533223724",
+    lat: '-8.122589883073196',
+    lng: '-34.90342533223724',
   },
   {
     id: 3,
@@ -44,8 +44,8 @@ export const STORES: Store[] = [
     state: 'Pernambuco',
     uf: 'PE',
     region: 'Nordeste',
-    lat: "-8.145220647650454",
-    lng: "-34.90585091689286",
+    lat: '-8.145220647650454',
+    lng: '-34.90585091689286',
   },
   {
     id: 4,
@@ -59,8 +59,8 @@ export const STORES: Store[] = [
     state: 'Pernambuco',
     uf: 'PE',
     region: 'Nordeste',
-    lat: "-8.033919221938861",
-    lng: "-34.906116208577146",
+    lat: '-8.033919221938861',
+    lng: '-34.906116208577146',
   },
   {
     id: 5,
@@ -74,8 +74,8 @@ export const STORES: Store[] = [
     state: 'Pernambuco',
     uf: 'PE',
     region: 'Nordeste',
-    lat: "-8.05297750035476",
-    lng: "-34.90838753223805",
+    lat: '-8.05297750035476',
+    lng: '-34.90838753223805',
   },
   {
     id: 6,
@@ -89,8 +89,8 @@ export const STORES: Store[] = [
     state: 'Bahia',
     uf: 'BA',
     region: 'Nordeste',
-    lat: "-12.987522143298927",
-    lng: "-38.52178572601932",
+    lat: '-12.987522143298927',
+    lng: '-38.52178572601932',
   },
   {
     id: 7,
@@ -104,8 +104,8 @@ export const STORES: Store[] = [
     state: 'Ceará',
     uf: 'CE',
     region: 'Nordeste',
-    lat: "-3.7239745653108085",
-    lng: "-38.510861156007024",
+    lat: '-3.7239745653108085',
+    lng: '-38.510861156007024',
   },
   {
     id: 8,
@@ -119,8 +119,8 @@ export const STORES: Store[] = [
     state: 'Minas Gerais',
     uf: 'MG',
     region: 'Sudeste',
-    lat: "-19.936896847457444",
-    lng: "-43.93779610892537",
+    lat: '-19.936896847457444',
+    lng: '-43.93779610892537',
   },
   {
     id: 9,
@@ -134,8 +134,8 @@ export const STORES: Store[] = [
     state: 'Minas Gerais',
     uf: 'MG',
     region: 'Sudeste',
-    lat: "-19.970433212119065",
-    lng: "-44.20920322883606",
+    lat: '-19.970433212119065',
+    lng: '-44.20920322883606',
   },
   {
     id: 10,
@@ -149,8 +149,8 @@ export const STORES: Store[] = [
     state: 'Rio de Janeiro',
     uf: 'RJ',
     region: 'Sudeste',
-    lat: "-22.901561969839037",
-    lng: "-43.175995759366536",
+    lat: '-22.901561969839037',
+    lng: '-43.175995759366536',
   },
   {
     id: 11,
@@ -164,8 +164,8 @@ export const STORES: Store[] = [
     state: 'São Paulo',
     uf: 'SP',
     region: 'Sudeste',
-    lat: "-23.55026309922297",
-    lng: "-46.634337214091325",
+    lat: '-23.55026309922297',
+    lng: '-46.634337214091325',
   },
   {
     id: 12,
@@ -179,8 +179,8 @@ export const STORES: Store[] = [
     state: 'Paraná',
     uf: 'PR',
     region: 'Sul',
-    lat: "-25.431865759485788",
-    lng: "-49.27215015300207",
+    lat: '-25.431865759485788',
+    lng: '-49.27215015300207',
   },
   {
     id: 13,
@@ -194,8 +194,8 @@ export const STORES: Store[] = [
     state: 'Rio Grande do Sul',
     uf: 'RS',
     region: 'Sul',
-    lat: "-30.034565380444008",
-    lng: "-51.2288668429482",
+    lat: '-30.034565380444008',
+    lng: '-51.2288668429482',
   },
   {
     id: 14,
@@ -209,8 +209,8 @@ export const STORES: Store[] = [
     state: 'Bahia',
     uf: 'BA',
     region: 'Nordeste',
-    lat: "-12.934627051301888",
-    lng: "-38.37254837081367",
+    lat: '-12.934627051301888',
+    lng: '-38.37254837081367',
   },
   {
     id: 15,
@@ -224,7 +224,7 @@ export const STORES: Store[] = [
     state: 'Ceará',
     uf: 'CE',
     region: 'Nordeste',
-    lat: "-3.741920989782808",
-    lng: "-38.50041132803743",
+    lat: '-3.741920989782808',
+    lng: '-38.50041132803743',
   },
 ];
