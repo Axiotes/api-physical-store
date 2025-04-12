@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { StoreService } from './store.service';
-import { CepValidationPipe } from 'src/common/pipes/cep-validation/cep-validation.pipe';
-import { StoreRoute } from 'src/common/interfaces/store-route.interface';
+import { CepValidationPipe } from '../../common/pipes/cep-validation/cep-validation.pipe';
+import { StoreRoute } from '../../common/interfaces/store-route.interface';
 
 @Controller('store')
 export class StoreController {

@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
 import { Repository } from 'typeorm';
-import { GeoUtilsService } from 'src/common/utils/geo-utils/geo-utils.service';
-import { StoreInterface } from 'src/common/interfaces/store.interface';
-import { StoreRoute } from 'src/common/interfaces/store-route.interface';
+import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service';
+import { StoreInterface } from '../../common/interfaces/store.interface';
+import { StoreRoute } from '../../common/interfaces/store-route.interface';
 
 @Injectable()
 export class StoreService {
@@ -30,7 +30,7 @@ export class StoreService {
       .sort((a, b) => a.distance.value - b.distance.value);
 
     if (closerStores.length === 0) {
-      throw new NotFoundException('No stores found within 100km radius.');
+      throw new NotFoundException('No stores found within 100km radius');
     }
 
     return closerStores;
