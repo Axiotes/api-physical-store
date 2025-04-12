@@ -25,42 +25,16 @@ export class StoreService {
   public async closerStores(cep: string): Promise<StoreRoute[]> {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
+
     const stores: StoreInterface[] = await this.storeRepository.find();
 
-    const diretionsPromises = stores.map(async (store) => {
-      const res = await lastValueFrom(
-        this.googleApisService.directions(
-          { lat, lng },
-          { lat: Number(store.lat), lng: Number(store.lng) },
-        ),
-      );
-
-      const data: DirectionsResponse = res.data;
-
-      if (!data || data.status === 'ZERO_RESULTS') {
-        return null;
-      }
-
-      const distance = data.routes[0].legs[0].distance;
-      const duration = data.routes[0].legs[0].duration;
-
-      return {
-        store,
-        distance,
-        duration,
-      } as StoreRoute;
-    });
-
-    const storesRoutes: StoreRoute[] = await Promise.all(diretionsPromises);
+    const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
+      { lat, lng },
+      stores,
+    );
 
     const closerStores: StoreRoute[] = storesRoutes
-      .filter((storeRoute) => {
-        if (!storeRoute || storeRoute.distance.value >= 100000) {
-          return;
-        }
-
-        return storeRoute;
-      })
+      .filter((storeRoute) => storeRoute.distance.value <= 100000)
       .sort((a, b) => a.distance.value - b.distance.value);
 
     if (closerStores.length === 0) {
