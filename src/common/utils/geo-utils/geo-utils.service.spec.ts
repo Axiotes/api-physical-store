@@ -5,6 +5,9 @@ import { GoogleApisService } from '../../requests/google-apis/google-apis.servic
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { NotFoundException } from '@nestjs/common';
+import { StoreTypeEnum } from '../../enums/store-type.enum';
+import { mock } from 'node:test';
+import { stat } from 'fs';
 
 describe('GeoUtilsService', () => {
   let service: GeoUtilsService;
@@ -123,5 +126,151 @@ describe('GeoUtilsService', () => {
     await expect(service.getCoordinate(address)).rejects.toThrow(
       new NotFoundException('Coordinates not found'),
     );
+  });
+
+  it('should return distances successfully', async () => {
+    const origin = { lat: 10, lng: 10 };
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-000',
+        street: 'Rua Teste',
+        city: 'Cidade Teste',
+        number: 1,
+        neighborhood: 'Bairro Teste',
+        state: 'UF Teste',
+        uf: 'UF',
+        region: 'Região Teste',
+        lat: '0',
+        lng: '0',
+      },
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'UF 2',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+
+    const mockResponse = {
+      status: 200,
+      data: {
+        routes: [
+          {
+            legs: [
+              {
+                distance: {
+                  text: '10 km',
+                  value: 10000,
+                },
+                duration: {
+                  text: '10 mins',
+                  value: 600,
+                },
+              },
+            ],
+          },
+        ],
+        status: 'OK',
+      },
+    };
+
+    const expectedDistances = [
+      {
+        store: stores[0],
+        distance: {
+          text: '10 km',
+          value: 10000,
+        },
+        duration: {
+          text: '10 mins',
+          value: 600,
+        },
+      },
+      {
+        store: stores[1],
+        distance: {
+          text: '10 km',
+          value: 10000,
+        },
+        duration: {
+          text: '10 mins',
+          value: 600,
+        },
+      },
+    ];
+
+    googleApisService.directions = jest.fn().mockReturnValue(of(mockResponse));
+
+    const distances = await service.getDistance(origin, stores);
+
+    expect(distances).toBeDefined();
+    expect(distances).toEqual(expectedDistances);
+    expect(googleApisService.directions).toHaveBeenCalledTimes(stores.length);
+  });
+
+  it('should not return any distance', async () => {
+    const origin = { lat: 10, lng: 10 };
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-000',
+        street: 'Rua Teste',
+        city: 'Cidade Teste',
+        number: 1,
+        neighborhood: 'Bairro Teste',
+        state: 'UF Teste',
+        uf: 'UF',
+        region: 'Região Teste',
+        lat: '0',
+        lng: '0',
+      },
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'UF 2',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+
+    const mockResponse = {
+      status: 200,
+      data: {
+        routes: [],
+        status: 'ZERO_RESULTS',
+      },
+    };
+
+    const expectedDistances = [];
+
+    googleApisService.directions = jest.fn().mockReturnValue(of(mockResponse));
+
+    const distances = await service.getDistance(origin, stores);
+
+    expect(distances).toBeDefined();
+    expect(distances).toEqual(expectedDistances);
+    expect(googleApisService.directions).toHaveBeenCalledTimes(stores.length);
   });
 });

@@ -1,16 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
 import { Repository } from 'typeorm';
 import { GeoUtilsService } from 'src/common/utils/geo-utils/geo-utils.service';
-import { GoogleApisService } from 'src/common/requests/google-apis/google-apis.service';
 import { StoreInterface } from 'src/common/interfaces/store.interface';
-import { lastValueFrom } from 'rxjs';
-import { DirectionsResponse } from 'src/common/interfaces/diretions-response.interface';
 import { StoreRoute } from 'src/common/interfaces/store-route.interface';
 
 @Injectable()
@@ -19,7 +12,6 @@ export class StoreService {
     @InjectRepository(Store)
     private readonly storeRepository: Repository<Store>,
     private readonly geoUtilsService: GeoUtilsService,
-    private readonly googleApisService: GoogleApisService,
   ) {}
 
   public async closerStores(cep: string): Promise<StoreRoute[]> {

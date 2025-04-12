@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { GoogleApisService } from '../../requests/google-apis/google-apis.service';
 import { ViaCepApiService } from '../../requests/via-cep-api/via-cep-api.service';
 import { ViaCepResponse } from '../../interfaces/via-cep-response.interface';
