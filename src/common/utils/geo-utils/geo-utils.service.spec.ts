@@ -6,8 +6,6 @@ import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { NotFoundException } from '@nestjs/common';
 import { StoreTypeEnum } from '../../enums/store-type.enum';
-import { mock } from 'node:test';
-import { stat } from 'fs';
 
 describe('GeoUtilsService', () => {
   let service: GeoUtilsService;
