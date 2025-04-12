@@ -18,32 +18,24 @@ export class GeoUtilsService {
   ) {}
 
   public async getAddress(cep: string): Promise<string> {
-    try {
-      const res = await lastValueFrom(this.viaCepApiService.viaCep(cep));
-      const data: ViaCepResponse = res.data;
+    const res = await lastValueFrom(this.viaCepApiService.viaCep(cep));
+    const data: ViaCepResponse = res.data;
 
-      if (!data || data.error) {
-        throw new NotFoundException('Address not found');
-      }
-
-      return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
-    } catch (err) {
-      throw new InternalServerErrorException(err);
+    if (!data || data.error) {
+      throw new NotFoundException('Address not found');
     }
+
+    return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
   }
 
   public async getCoordinate(address: string): Promise<LatLng> {
-    try {
-      const res = await lastValueFrom(this.googleApisService.geocode(address));
-      const data: GeocodeResponse = res.data;
+    const res = await lastValueFrom(this.googleApisService.geocode(address));
+    const data: GeocodeResponse = res.data;
 
-      if (!data || data.status === 'ZERO_RESULTS') {
-        throw new NotFoundException('Coordinates not found');
-      }
-
-      return data.results[0].geometry.location;
-    } catch (err) {
-      throw new InternalServerErrorException(err);
+    if (!data || data.status === 'ZERO_RESULTS') {
+      throw new NotFoundException('Coordinates not found');
     }
+
+    return data.results[0].geometry.location;
   }
 }

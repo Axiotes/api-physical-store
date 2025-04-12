@@ -23,54 +23,50 @@ export class StoreService {
   ) {}
 
   public async closerStores(cep: string): Promise<StoreRoute[]> {
-    try {
-      const address: string = await this.geoUtilsService.getAddress(cep);
-      const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
-      const stores: StoreInterface[] = await this.storeRepository.find();
+    const address: string = await this.geoUtilsService.getAddress(cep);
+    const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
+    const stores: StoreInterface[] = await this.storeRepository.find();
 
-      const diretionsPromises = stores.map(async (store) => {
-        const res = await lastValueFrom(
-          this.googleApisService.directions(
-            { lat, lng },
-            { lat: Number(store.lat), lng: Number(store.lng) },
-          ),
-        );
+    const diretionsPromises = stores.map(async (store) => {
+      const res = await lastValueFrom(
+        this.googleApisService.directions(
+          { lat, lng },
+          { lat: Number(store.lat), lng: Number(store.lng) },
+        ),
+      );
 
-        const data: DirectionsResponse = res.data;
+      const data: DirectionsResponse = res.data;
 
-        if (!data || data.status === 'ZERO_RESULTS') {
-          return null;
-        }
-
-        const distance = data.routes[0].legs[0].distance;
-        const duration = data.routes[0].legs[0].duration;
-
-        return {
-          store,
-          distance,
-          duration,
-        } as StoreRoute;
-      });
-
-      const storesRoutes: StoreRoute[] = await Promise.all(diretionsPromises);
-
-      const closerStores: StoreRoute[] = storesRoutes
-        .filter((storeRoute) => {
-          if (!storeRoute || storeRoute.distance.value >= 100000) {
-            return;
-          }
-
-          return storeRoute;
-        })
-        .sort((a, b) => a.distance.value - b.distance.value);
-
-      if (closerStores.length === 0) {
-        throw new NotFoundException('No stores found within 100km radius.');
+      if (!data || data.status === 'ZERO_RESULTS') {
+        return null;
       }
 
-      return closerStores;
-    } catch (error) {
-      throw new InternalServerErrorException(error);
+      const distance = data.routes[0].legs[0].distance;
+      const duration = data.routes[0].legs[0].duration;
+
+      return {
+        store,
+        distance,
+        duration,
+      } as StoreRoute;
+    });
+
+    const storesRoutes: StoreRoute[] = await Promise.all(diretionsPromises);
+
+    const closerStores: StoreRoute[] = storesRoutes
+      .filter((storeRoute) => {
+        if (!storeRoute || storeRoute.distance.value >= 100000) {
+          return;
+        }
+
+        return storeRoute;
+      })
+      .sort((a, b) => a.distance.value - b.distance.value);
+
+    if (closerStores.length === 0) {
+      throw new NotFoundException('No stores found within 100km radius.');
     }
+
+    return closerStores;
   }
 }
