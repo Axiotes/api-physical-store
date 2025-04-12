@@ -3,11 +3,17 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ErrorInterceptor } from './common/interceptors/error/error.interceptor';
+import { LoggerService } from './common/utils/logger/logger.service';
+import { LoggerInterceptor } from './common/interceptors/logger/logger.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ErrorInterceptor());
+
+  const logger = app.get(LoggerService);
+  app.useGlobalInterceptors(new LoggerInterceptor(logger));
+  
   app.setGlobalPrefix('api/v1');
 
   const config = new DocumentBuilder()

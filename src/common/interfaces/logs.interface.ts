@@ -3,6 +3,7 @@ export interface Logs {
   url: string;
   params: any;
   body: any;
-  executionTime: Date;
+  executionTime: string;
+  statusCode: number;
   error?: Error;
 }
