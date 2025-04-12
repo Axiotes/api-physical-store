@@ -5,5 +5,8 @@ export interface Logs {
   body: any;
   executionTime: string;
   statusCode: number;
-  error?: Error;
+  error?: {
+    errorMessage: string;
+    errorName?: string;
+  };
 }

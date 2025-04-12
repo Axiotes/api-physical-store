@@ -9,9 +9,9 @@ import { LoggerInterceptor } from './common/interceptors/logger/logger.intercept
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new ErrorInterceptor());
 
   const logger = app.get(LoggerService);
+  app.useGlobalInterceptors(new ErrorInterceptor(logger));
   app.useGlobalInterceptors(new LoggerInterceptor(logger));
   
   app.setGlobalPrefix('api/v1');
