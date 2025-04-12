@@ -1,15 +1,42 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { promises as fs } from 'fs';
+import { Logs } from '../../interfaces/logs.interface';
+import * as winston from 'winston';
 
 @Injectable()
 export class LoggerService implements OnModuleInit {
-  async onModuleInit() {
+  private readonly logger = winston.createLogger({
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json(),
+    ),
+    transports: [
+      new winston.transports.File({
+        filename: `${__dirname}/../../../../logs/combined.log`,
+        level: 'info',
+      }),
+      new winston.transports.File({
+        filename: `${__dirname}/../../../../logs/error.log`,
+        level: 'error',
+      }),
+    ],
+  });
+
+  async onModuleInit(): Promise<void> {
     await this.verifyDirectory();
     await this.verifyFiles('./logs/combined.log');
     await this.verifyFiles('./logs/error.log');
   }
 
-  private async verifyDirectory() {
+  public logInfo(message: Logs): void {
+    this.logger.info(message);
+  }
+
+  public logError(message: Logs): void {
+    this.logger.error(message);
+  }
+
+  private async verifyDirectory(): Promise<void> {
     try {
       await fs.access('./logs');
     } catch (error) {
@@ -17,7 +44,7 @@ export class LoggerService implements OnModuleInit {
     }
   }
 
-  private async verifyFiles(filePath: string) {
+  private async verifyFiles(filePath: string): Promise<void> {
     try {
       await fs.access(filePath);
     } catch (error) {

@@ -6,6 +6,6 @@ import { LoggerService } from './logger/logger.service';
 @Module({
   imports: [RequestsModule],
   providers: [GeoUtilsService, LoggerService],
-  exports: [GeoUtilsService],
+  exports: [GeoUtilsService, LoggerService],
 })
 export class UtilsModule {}
