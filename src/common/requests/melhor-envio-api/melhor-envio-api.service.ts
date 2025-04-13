@@ -3,6 +3,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import { Product } from 'src/common/interfaces/product.interface';
 
 @Injectable()
 export class MelhorEnvioApiService {
@@ -22,23 +23,14 @@ export class MelhorEnvioApiService {
   public freight(
     from: string,
     to: string,
+    products: Product[],
   ): Observable<AxiosResponse<MelhorEnvioResponse>> {
     return this.httpService.post<MelhorEnvioResponse>(
       'https://melhorenvio.com.br/api/v2/me/shipment/calculate',
       {
         from: { postal_code: from },
         to: { postal_code: to },
-        products: [
-          {
-            id: '1',
-            width: 15,
-            height: 10,
-            length: 20,
-            weight: 1,
-            insurance_value: 0,
-            quantity: 1,
-          },
-        ],
+        products,
         options: {
           receipt: false,
           own_hand: false,
