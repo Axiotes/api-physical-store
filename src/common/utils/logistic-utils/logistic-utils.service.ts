@@ -3,7 +3,7 @@ import { lastValueFrom } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
 import { StoreFreights } from '../../interfaces/store-freights.interface';
 import { MelhorEnvioApiService } from '../../requests/melhor-envio-api/melhor-envio-api.service';
-import { StoreRoute } from 'src/common/interfaces/store-route.interface';
+import { StoreRoute } from '../../interfaces/store-route.interface';
 import { AxiosResponse } from 'axios';
 
 @Injectable()

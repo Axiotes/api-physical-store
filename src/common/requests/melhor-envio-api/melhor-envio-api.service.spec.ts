@@ -75,7 +75,7 @@ describe('MelhorEnvioApiService', () => {
             reverse: false,
             non_commercial: true,
           },
-          services: ['1', '2'],
+          services: "1,2",
           validate: true,
         },
         {

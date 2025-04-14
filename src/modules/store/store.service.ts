@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service';
 import { StoreInterface } from '../../common/interfaces/store.interface';
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
-import { Product } from 'src/common/interfaces/product.interface';
-import { StoreFreights } from 'src/common/interfaces/store-freights.interface';
-import { LogisticUtilsService } from 'src/common/utils/logistic-utils/logistic-utils.service';
+import { Product } from '../../common/interfaces/product.interface';
+import { StoreFreights } from '../../common/interfaces/store-freights.interface';
+import { LogisticUtilsService } from '../../common/utils/logistic-utils/logistic-utils.service';
 import { PaginationDto } from './dtos/pagination.dto';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class StoreService {
     return closerStores;
   }
 
-  public async storeByCep(
+  public async storesFreight(
     cep: string,
     products: Product[],
     pagination: PaginationDto,
@@ -90,11 +90,13 @@ export class StoreService {
     });
 
     const farther50kmFreights: StoreFreights[] =
-      await this.logisticUtilsService.getFreight(
-        storesFarther50km,
-        cep,
-        products,
-      );
+      storesFarther50km.length > 0
+        ? await this.logisticUtilsService.getFreight(
+            storesFarther50km,
+            cep,
+            products,
+          )
+        : [];
 
     const storeFreights: StoreFreights[] = [
       ...farther50kmFreights,

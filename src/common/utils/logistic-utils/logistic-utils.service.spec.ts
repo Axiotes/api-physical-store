@@ -2,11 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LogisticUtilsService } from './logistic-utils.service';
 import { MelhorEnvioApiService } from '../../requests/melhor-envio-api/melhor-envio-api.service';
 import { StoreTypeEnum } from '../../enums/store-type.enum';
-import { StoreInterface } from '../../interfaces/store.interface';
 import { Product } from '../../interfaces/product.interface';
 import { StoreFreights } from '../../interfaces/store-freights.interface';
 import { of, throwError } from 'rxjs';
-import { StoreRoute } from 'src/common/interfaces/store-route.interface';
+import { StoreRoute } from '../../interfaces/store-route.interface';
 
 describe('LogisticUtilsService', () => {
   let service: LogisticUtilsService;

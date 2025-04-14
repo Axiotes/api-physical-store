@@ -6,11 +6,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service';
 import { StoreTypeEnum } from '../../common/enums/store-type.enum';
 import { NotFoundException } from '@nestjs/common';
+import { LogisticUtilsService } from '../../common/utils/logistic-utils/logistic-utils.service';
 
 describe('StoreService', () => {
   let service: StoreService;
   let storeRepositoryMock: Partial<jest.Mocked<Repository<Store>>>;
   let geoUtilsService: GeoUtilsService;
+  let logisticUtilsService: LogisticUtilsService;
 
   beforeEach(async () => {
     storeRepositoryMock = {
@@ -29,11 +31,20 @@ describe('StoreService', () => {
             getDistance: jest.fn(),
           },
         },
+        {
+          provide: LogisticUtilsService,
+          useValue: {
+            getFreight: jest.fn(),
+            deliveryTime: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<StoreService>(StoreService);
     geoUtilsService = module.get<GeoUtilsService>(GeoUtilsService);
+    logisticUtilsService =
+      module.get<LogisticUtilsService>(LogisticUtilsService);
     jest.clearAllMocks();
   });
 
@@ -191,5 +202,495 @@ describe('StoreService', () => {
       coordinate,
       stores,
     );
+  });
+
+  it('should return freight ordered by distance with stores within and outside 50 km', async () => {
+    const cep = '12345678';
+    const address = '123 Main St, City, State';
+    const coordinate = { lat: 40.7128, lng: -74.006 };
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-000',
+        street: 'Rua Teste',
+        city: 'Cidade Teste',
+        number: 1,
+        neighborhood: 'Bairro Teste',
+        state: 'UF Teste',
+        uf: 'UF',
+        region: 'Região Teste',
+        lat: '0',
+        lng: '0',
+      },
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'UF 2',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const storesRoutes = [
+      {
+        store: {
+          id: 1,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 1',
+          cep: '00000-000',
+          street: 'Rua Teste',
+          city: 'Cidade Teste',
+          number: 1,
+          neighborhood: 'Bairro Teste',
+          state: 'UF Teste',
+          uf: 'UF',
+          region: 'Região Teste',
+          lat: '0',
+          lng: '0',
+        },
+        distance: { value: 45000, text: '45 km' },
+        duration: { value: 3600, text: '1 hour' },
+      },
+      {
+        store: {
+          id: 2,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 2',
+          cep: '00000-001',
+          street: 'Rua Teste 2',
+          city: 'Cidade Teste 2',
+          number: 2,
+          neighborhood: 'Bairro Teste 2',
+          state: 'UF Teste 2',
+          uf: 'UF 2',
+          region: 'Região Teste 2',
+          lat: '1',
+          lng: '1',
+        },
+        distance: { value: 60000, text: '60 km' },
+        duration: { value: 7200, text: '2 hours' },
+      },
+    ];
+    const mockReturn = [
+      {
+        store: stores[0],
+        distance: { value: 45000, text: '45 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'Store 1',
+            price: '15.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 4, max: 5 },
+            company: {
+              id: 1,
+              name: 'Store 1',
+            },
+          },
+        ],
+      },
+      {
+        store: stores[1],
+        distance: { value: 60000, text: '60 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'PAC',
+            price: '20.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 6, max: 7 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+          {
+            id: 1,
+            name: 'Sedex',
+            price: '35.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 2, max: 3 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+        ],
+      },
+    ];
+
+    geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
+    geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
+    const createQueryBuilderMock = {
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(stores),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+    geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
+    logisticUtilsService.deliveryTime = jest
+      .fn()
+      .mockReturnValue({ min: 4, max: 5 });
+    logisticUtilsService.getFreight = jest.fn().mockResolvedValue([
+      {
+        store: stores[1],
+        distance: { value: 60000, text: '60 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'PAC',
+            price: '20.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 6, max: 7 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+          {
+            id: 1,
+            name: 'Sedex',
+            price: '35.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 2, max: 3 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+        ],
+      },
+    ]);
+
+    const products = [
+      {
+        id: '1',
+        width: 15,
+        height: 10,
+        length: 20,
+        weight: 1,
+        insurance_value: 0,
+        quantity: 1,
+      },
+    ];
+    const pagination = { offset: 0, limit: 10 };
+
+    const result = await service.storesFreight(cep, products, pagination);
+
+    expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
+    expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledWith(address);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledWith(
+      'store',
+    );
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledWith(pagination.offset);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledWith(pagination.limit);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.getMany).toHaveBeenCalled();
+    expect(geoUtilsService.getDistance).toHaveBeenCalledWith(
+      coordinate,
+      stores,
+    );
+    expect(logisticUtilsService.getFreight).toHaveBeenCalledWith(
+      [storesRoutes[1]],
+      cep,
+      products,
+    );
+    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockReturn);
+  });
+
+  it('should only return stores within 50km when all are close together', async () => {
+    const cep = '12345678';
+    const address = '123 Main St, City, State';
+    const coordinate = { lat: 40.7128, lng: -74.006 };
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-000',
+        street: 'Rua Teste',
+        city: 'Cidade Teste',
+        number: 1,
+        neighborhood: 'Bairro Teste',
+        state: 'UF Teste',
+        uf: 'UF',
+        region: 'Região Teste',
+        lat: '0',
+        lng: '0',
+      },
+    ];
+    const storesRoutes = [
+      {
+        store: {
+          id: 1,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 1',
+          cep: '00000-000',
+          street: 'Rua Teste',
+          city: 'Cidade Teste',
+          number: 1,
+          neighborhood: 'Bairro Teste',
+          state: 'UF Teste',
+          uf: 'UF',
+          region: 'Região Teste',
+          lat: '0',
+          lng: '0',
+        },
+        distance: { value: 45000, text: '45 km' },
+        duration: { value: 3600, text: '1 hour' },
+      },
+    ];
+    const mockReturn = [
+      {
+        store: stores[0],
+        distance: { value: 45000, text: '45 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'Store 1',
+            price: '15.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 4, max: 5 },
+            company: {
+              id: 1,
+              name: 'Store 1',
+            },
+          },
+        ],
+      },
+    ];
+
+    geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
+    geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
+    const createQueryBuilderMock = {
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(stores),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+    geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
+    logisticUtilsService.deliveryTime = jest
+      .fn()
+      .mockReturnValue({ min: 4, max: 5 });
+
+    const products = [
+      {
+        id: '1',
+        width: 15,
+        height: 10,
+        length: 20,
+        weight: 1,
+        insurance_value: 0,
+        quantity: 1,
+      },
+    ];
+    const pagination = { offset: 0, limit: 10 };
+
+    const result = await service.storesFreight(cep, products, pagination);
+
+    expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
+    expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledWith(address);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledWith(
+      'store',
+    );
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledWith(pagination.offset);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledWith(pagination.limit);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.getMany).toHaveBeenCalled();
+    expect(geoUtilsService.getDistance).toHaveBeenCalledWith(
+      coordinate,
+      stores,
+    );
+    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(0);
+    expect(result).toEqual(mockReturn);
+  });
+
+  it('should only return stores over 50 km away when they are all far apart', async () => {
+    const cep = '12345678';
+    const address = '123 Main St, City, State';
+    const coordinate = { lat: 40.7128, lng: -74.006 };
+    const stores = [
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'UF 2',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const storesRoutes = [
+      {
+        store: {
+          id: 2,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 2',
+          cep: '00000-001',
+          street: 'Rua Teste 2',
+          city: 'Cidade Teste 2',
+          number: 2,
+          neighborhood: 'Bairro Teste 2',
+          state: 'UF Teste 2',
+          uf: 'UF 2',
+          region: 'Região Teste 2',
+          lat: '1',
+          lng: '1',
+        },
+        distance: { value: 60000, text: '60 km' },
+        duration: { value: 7200, text: '2 hours' },
+      },
+    ];
+    const mockReturn = [
+      {
+        store: stores[1],
+        distance: { value: 60000, text: '60 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'PAC',
+            price: '20.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 6, max: 7 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+          {
+            id: 1,
+            name: 'Sedex',
+            price: '35.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 2, max: 3 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+        ],
+      },
+    ];
+
+    geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
+    geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
+    const createQueryBuilderMock = {
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(stores),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+    geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
+    logisticUtilsService.getFreight = jest.fn().mockResolvedValue([
+      {
+        store: stores[1],
+        distance: { value: 60000, text: '60 km' },
+        freights: [
+          {
+            id: 1,
+            name: 'PAC',
+            price: '20.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 6, max: 7 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+          {
+            id: 1,
+            name: 'Sedex',
+            price: '35.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: { min: 2, max: 3 },
+            company: {
+              id: 1,
+              name: 'Correios',
+            },
+          },
+        ],
+      },
+    ]);
+
+    const products = [
+      {
+        id: '1',
+        width: 15,
+        height: 10,
+        length: 20,
+        weight: 1,
+        insurance_value: 0,
+        quantity: 1,
+      },
+    ];
+    const pagination = { offset: 0, limit: 10 };
+
+    const result = await service.storesFreight(cep, products, pagination);
+
+    expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
+    expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledWith(address);
+    expect(geoUtilsService.getCoordinate).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledWith(
+      'store',
+    );
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledWith(pagination.offset);
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledWith(pagination.limit);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledTimes(1);
+    expect(createQueryBuilderMock.getMany).toHaveBeenCalled();
+    expect(geoUtilsService.getDistance).toHaveBeenCalledWith(
+      coordinate,
+      stores,
+    );
+    expect(logisticUtilsService.getFreight).toHaveBeenCalledWith(
+      [storesRoutes[0]],
+      cep,
+      products,
+    );
+    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(1);
+    expect(logisticUtilsService.deliveryTime).toHaveBeenCalledTimes(0);
+    expect(result).toEqual(mockReturn);
   });
 });

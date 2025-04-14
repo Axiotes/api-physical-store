@@ -4,8 +4,8 @@ import { CepValidationPipe } from '../../common/pipes/cep-validation/cep-validat
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
 import { ApiOperation } from '@nestjs/swagger';
 import { PaginationDto } from './dtos/pagination.dto';
-import { StoreFreights } from 'src/common/interfaces/store-freights.interface';
-import { ValidatePaginationInterceptor } from 'src/common/interceptors/validate-pagination/validate-pagination.interceptor';
+import { StoreFreights } from '../../common/interfaces/store-freights.interface';
+import { ValidatePaginationInterceptor } from '../../common/interceptors/validate-pagination/validate-pagination.interceptor';
 
 @UseInterceptors(ValidatePaginationInterceptor)
 @Controller('store')
@@ -23,12 +23,12 @@ export class StoreController {
     return await this.storeService.closerStores(cep);
   }
 
-  @Get('cep/:cep')
+  @Get('freight/:cep')
   public async storeByCep(
     @Param('cep', CepValidationPipe) cep: string,
     @Query() pagination: PaginationDto,
   ) {
-    const storeFreights: StoreFreights[] = await this.storeService.storeByCep(
+    const storeFreights: StoreFreights[] = await this.storeService.storesFreight(
       cep,
       [
         {
