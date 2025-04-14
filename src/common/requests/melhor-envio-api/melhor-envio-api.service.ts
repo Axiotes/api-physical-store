@@ -24,8 +24,8 @@ export class MelhorEnvioApiService {
     from: string,
     to: string,
     products: Product[],
-  ): Observable<AxiosResponse<MelhorEnvioResponse>> {
-    return this.httpService.post<MelhorEnvioResponse>(
+  ): Observable<AxiosResponse<MelhorEnvioResponse[]>> {
+    return this.httpService.post<MelhorEnvioResponse[]>(
       'https://melhorenvio.com.br/api/v2/me/shipment/calculate',
       {
         from: { postal_code: from },
