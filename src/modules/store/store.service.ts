@@ -8,6 +8,7 @@ import { StoreRoute } from '../../common/interfaces/store-route.interface';
 import { Product } from 'src/common/interfaces/product.interface';
 import { StoreFreights } from 'src/common/interfaces/store-freights.interface';
 import { LogisticUtilsService } from 'src/common/utils/logistic-utils/logistic-utils.service';
+import { PaginationDto } from './dtos/pagination.dto';
 
 @Injectable()
 export class StoreService {
@@ -40,11 +41,19 @@ export class StoreService {
     return closerStores;
   }
 
-  public async storeByCep(cep: string, products: Product[]) {
+  public async storeByCep(
+    cep: string,
+    products: Product[],
+    pagination: PaginationDto,
+  ): Promise<StoreFreights[]> {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
 
-    const stores: StoreInterface[] = await this.storeRepository.find();
+    const stores: StoreInterface[] = await this.storeRepository
+      .createQueryBuilder('store')
+      .skip(pagination.offset)
+      .take(pagination.limit)
+      .getMany();
 
     const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
       { lat, lng },
