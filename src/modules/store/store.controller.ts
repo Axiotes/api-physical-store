@@ -18,4 +18,19 @@ export class StoreController {
   ): Promise<StoreRoute[]> {
     return await this.storeService.closerStores(cep);
   }
+
+  @Get('cep/:cep')
+  public async storeByCep(@Param('cep', CepValidationPipe) cep: string) {
+    return await this.storeService.storeByCep(cep, [
+      {
+        id: '1',
+        width: 15,
+        height: 10,
+        length: 20,
+        weight: 1,
+        insurance_value: 0,
+        quantity: 1,
+      },
+    ]);
+  }
 }

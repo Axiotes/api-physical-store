@@ -7,6 +7,6 @@ import { LogisticUtilsService } from './logistic-utils/logistic-utils.service';
 @Module({
   imports: [RequestsModule],
   providers: [GeoUtilsService, LoggerService, LogisticUtilsService],
-  exports: [GeoUtilsService, LoggerService],
+  exports: [GeoUtilsService, LoggerService, LogisticUtilsService],
 })
 export class UtilsModule {}

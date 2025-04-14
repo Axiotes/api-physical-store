@@ -3,7 +3,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { Product } from 'src/common/interfaces/product.interface';
+import { Product } from '../../interfaces/product.interface';
 
 @Injectable()
 export class MelhorEnvioApiService {
@@ -38,7 +38,7 @@ export class MelhorEnvioApiService {
           reverse: false,
           non_commercial: true,
         },
-        services: ['1', '2'],
+        services: "1,2",
         validate: true,
       },
       {

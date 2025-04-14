@@ -5,6 +5,9 @@ import { Repository } from 'typeorm';
 import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service';
 import { StoreInterface } from '../../common/interfaces/store.interface';
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
+import { Product } from 'src/common/interfaces/product.interface';
+import { StoreFreights } from 'src/common/interfaces/store-freights.interface';
+import { LogisticUtilsService } from 'src/common/utils/logistic-utils/logistic-utils.service';
 
 @Injectable()
 export class StoreService {
@@ -12,6 +15,7 @@ export class StoreService {
     @InjectRepository(Store)
     private readonly storeRepository: Repository<Store>,
     private readonly geoUtilsService: GeoUtilsService,
+    private readonly logisticUtilsService: LogisticUtilsService,
   ) {}
 
   public async closerStores(cep: string): Promise<StoreRoute[]> {
@@ -34,5 +38,61 @@ export class StoreService {
     }
 
     return closerStores;
+  }
+
+  public async storeByCep(cep: string, products: Product[]) {
+    const address: string = await this.geoUtilsService.getAddress(cep);
+    const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
+
+    const stores: StoreInterface[] = await this.storeRepository.find();
+
+    const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
+      { lat, lng },
+      stores,
+    );
+
+    const storesFarther50km: StoreRoute[] = [];
+    const storesWithin50km: StoreFreights[] = storesRoutes.map((storeRoute) => {
+      if (storeRoute.distance.value > 50000) {
+        storesFarther50km.push(storeRoute);
+        return null;
+      }
+
+      return {
+        store: storeRoute.store,
+        distance: storeRoute.distance,
+        freights: [
+          {
+            id: storeRoute.store.id,
+            name: storeRoute.store.name,
+            price: '15.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: {
+              min: 1,
+              max: 3,
+            },
+            company: {
+              id: storeRoute.store.id,
+              name: storeRoute.store.name,
+            },
+          },
+        ],
+      };
+    });
+
+    const farther50kmFreights: StoreFreights[] =
+      await this.logisticUtilsService.getFreight(
+        storesFarther50km,
+        cep,
+        products,
+      );
+
+    const storeFreights: StoreFreights[] = [
+      ...farther50kmFreights,
+      ...storesWithin50km.filter((item) => item !== null),
+    ].sort((a, b) => a.distance.value - b.distance.value);
+
+    return storeFreights;
   }
 }
