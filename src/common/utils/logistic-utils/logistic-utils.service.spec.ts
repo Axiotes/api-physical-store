@@ -6,6 +6,7 @@ import { StoreInterface } from '../../interfaces/store.interface';
 import { Product } from '../../interfaces/product.interface';
 import { StoreFreights } from '../../interfaces/store-freights.interface';
 import { of, throwError } from 'rxjs';
+import { StoreRoute } from 'src/common/interfaces/store-route.interface';
 
 describe('LogisticUtilsService', () => {
   let service: LogisticUtilsService;
@@ -35,21 +36,31 @@ describe('LogisticUtilsService', () => {
   });
 
   it('should return freights successfully', async () => {
-    const stores: StoreInterface[] = [
+    const stores: StoreRoute[] = [
       {
-        id: 1,
-        type: StoreTypeEnum.PDV,
-        name: 'Store 1',
-        cep: '00000-000',
-        street: 'Rua Teste',
-        city: 'Cidade Teste',
-        number: 1,
-        neighborhood: 'Bairro Teste',
-        state: 'UF Teste',
-        uf: 'UF',
-        region: 'Região Teste',
-        lat: '0',
-        lng: '0',
+        store: {
+          id: 1,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 1',
+          cep: '00000-000',
+          street: 'Rua Teste',
+          city: 'Cidade Teste',
+          number: 1,
+          neighborhood: 'Bairro Teste',
+          state: 'UF Teste',
+          uf: 'UF',
+          region: 'Região Teste',
+          lat: '0',
+          lng: '0',
+        },
+        distance: {
+          text: '60 km',
+          value: 60000,
+        },
+        duration: {
+          text: '1 day',
+          value: 86400,
+        },
       },
     ];
     const to = '00000000';
@@ -75,7 +86,8 @@ describe('LogisticUtilsService', () => {
     ];
     const mockStoresFreigths: StoreFreights[] = [
       {
-        store: stores[0],
+        store: stores[0].store,
+        distance: stores[0].distance,
         freights: [
           {
             id: 1,
@@ -153,21 +165,31 @@ describe('LogisticUtilsService', () => {
   });
 
   it('should return empty array when no freights are found', async () => {
-    const stores: StoreInterface[] = [
+    const stores: StoreRoute[] = [
       {
-        id: 1,
-        type: StoreTypeEnum.PDV,
-        name: 'Store 1',
-        cep: '00000-000',
-        street: 'Rua Teste',
-        city: 'Cidade Teste',
-        number: 1,
-        neighborhood: 'Bairro Teste',
-        state: 'UF Teste',
-        uf: 'UF',
-        region: 'Região Teste',
-        lat: '0',
-        lng: '0',
+        store: {
+          id: 1,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 1',
+          cep: '00000-000',
+          street: 'Rua Teste',
+          city: 'Cidade Teste',
+          number: 1,
+          neighborhood: 'Bairro Teste',
+          state: 'UF Teste',
+          uf: 'UF',
+          region: 'Região Teste',
+          lat: '0',
+          lng: '0',
+        },
+        distance: {
+          text: '60 km',
+          value: 60000,
+        },
+        duration: {
+          text: '1 day',
+          value: 86400,
+        },
       },
     ];
     const to = '00000000';
@@ -195,21 +217,31 @@ describe('LogisticUtilsService', () => {
   });
 
   it('should throw an InternalServerErrorException when an error occurs in the api request', async () => {
-    const stores: StoreInterface[] = [
+    const stores: StoreRoute[] = [
       {
-        id: 1,
-        type: StoreTypeEnum.PDV,
-        name: 'Store 1',
-        cep: '00000-000',
-        street: 'Rua Teste',
-        city: 'Cidade Teste',
-        number: 1,
-        neighborhood: 'Bairro Teste',
-        state: 'UF Teste',
-        uf: 'UF',
-        region: 'Região Teste',
-        lat: '0',
-        lng: '0',
+        store: {
+          id: 1,
+          type: StoreTypeEnum.PDV,
+          name: 'Store 1',
+          cep: '00000-000',
+          street: 'Rua Teste',
+          city: 'Cidade Teste',
+          number: 1,
+          neighborhood: 'Bairro Teste',
+          state: 'UF Teste',
+          uf: 'UF',
+          region: 'Região Teste',
+          lat: '0',
+          lng: '0',
+        },
+        distance: {
+          text: '60 km',
+          value: 60000,
+        },
+        duration: {
+          text: '1 day',
+          value: 86400,
+        },
       },
     ];
     const to = '00000000';
@@ -232,5 +264,20 @@ describe('LogisticUtilsService', () => {
     await expect(service.getFreight(stores, to, products)).rejects.toThrow(
       new Error('API Error'),
     );
+  });
+
+  it('should throw BadRequestException when distance exceeds maximum limit', () => {
+    const distance = 60000;
+
+    expect(() => service.deliveryTime(distance)).toThrow(
+      `Distance exceeds the maximum limit of 50 km`,
+    );
+  });
+
+  it('should calculate delivery time correctly', () => {
+    const distance = 25000;
+    const result = service.deliveryTime(distance);
+
+    expect(result).toEqual({ min: 7, max: 8 });
   });
 });

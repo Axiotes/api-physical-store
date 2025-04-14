@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
 import { StoreFreights } from '../../interfaces/store-freights.interface';
@@ -46,5 +46,21 @@ export class LogisticUtilsService {
     const freights = await Promise.all(freightPromises);
 
     return freights.filter((item) => item !== null);
+  }
+
+  public deliveryTime(distance: number) {
+    const maxDistance = 50000;
+    const maxMinDays = 12;
+
+    if (distance > maxDistance) {
+      throw new BadRequestException(
+        `Distance exceeds the maximum limit of ${maxDistance / 1000} km`,
+      );
+    }
+
+    const min = Math.ceil((distance / maxDistance) * (maxMinDays - 1)) + 1;
+    const max = min + 1;
+
+    return { min, max };
   }
 }

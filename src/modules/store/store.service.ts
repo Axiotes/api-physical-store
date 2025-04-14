@@ -77,10 +77,9 @@ export class StoreService {
             price: '15.00',
             discount: '0',
             currency: 'R$',
-            delivery_range: {
-              min: 1,
-              max: 3,
-            },
+            delivery_range: this.logisticUtilsService.deliveryTime(
+              storeRoute.distance.value,
+            ),
             company: {
               id: storeRoute.store.id,
               name: storeRoute.store.name,
