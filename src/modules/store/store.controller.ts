@@ -15,7 +15,7 @@ import { PaginationDto } from './dtos/pagination.dto';
 import { StoreShipping } from '../../common/interfaces/store-shipping.interface';
 import { ValidatePaginationInterceptor } from '../../common/interceptors/validate-pagination/validate-pagination.interceptor';
 import { ShippingBodyDto } from './dtos/shipping-body.dto';
-import { OffsetValidated } from 'src/common/decorators/offset-validate.decorator';
+import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
 
 @OffsetValidated(Store)

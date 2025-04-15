@@ -187,4 +187,43 @@ describe('ValidatePaginationInterceptor', () => {
       expect(value).toBeUndefined();
     });
   });
+
+  it('should throw BadRequestException if offset exceeds total records', async () => {
+    const mockReflector = {
+      get: jest.fn().mockReturnValue('MockEntity'),
+    } as Partial<Reflector>;
+
+    const mockRepo = {
+      count: jest.fn().mockResolvedValue(15),
+    };
+
+    const mockDataSource = {
+      getRepository: jest.fn().mockReturnValue(mockRepo),
+    } as Partial<DataSource>;
+
+    const interceptor = new ValidatePaginationInterceptor(
+      mockReflector as Reflector,
+      mockDataSource as DataSource,
+    );
+
+    const mockExecutionContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({
+          query: {
+            offset: 20,
+            limit: 5,
+          },
+        }),
+      }),
+      getClass: () => class {},
+    } as ExecutionContext;
+
+    const callHandler: CallHandler = {
+      handle: () => of(),
+    };
+
+    await expect(() =>
+      interceptor.intercept(mockExecutionContext, callHandler),
+    ).rejects.toThrow(BadRequestException);
+  });
 });
