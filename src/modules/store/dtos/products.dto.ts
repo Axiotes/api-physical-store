@@ -4,7 +4,6 @@ import { IsString, IsNumber, Min } from 'class-validator';
 export class ProductDto {
   @ApiProperty({ description: 'ID do produto (cm)' })
   @IsString()
-  @Min(0.1)
   id: string;
 
   @ApiProperty({ description: 'Largura do produto (cm)' })
