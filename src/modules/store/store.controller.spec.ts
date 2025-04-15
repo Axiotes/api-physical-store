@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
+import { DataSource } from 'typeorm';
 
 describe('StoreController', () => {
   let controller: StoreController;
@@ -14,6 +15,15 @@ describe('StoreController', () => {
           provide: StoreService,
           useValue: {
             closerStores: jest.fn(),
+          },
+        },
+        {
+          provide: DataSource,
+          useValue: {
+            query: jest.fn(),
+            manager: {
+              transaction: jest.fn(),
+            },
           },
         },
       ],
@@ -51,5 +61,143 @@ describe('StoreController', () => {
     expect(storeService.closerStores).toHaveBeenCalledTimes(1);
     expect(storeService.closerStores).toHaveBeenCalledWith(cep);
     expect(result).toEqual(mockResponse);
+  });
+
+  it('should return shipping with pagination successfully', async () => {
+    const cep = '12345678';
+    const body = {
+      products: [
+        {
+          id: '1',
+          width: 15,
+          height: 10,
+          length: 20,
+          weight: 1,
+          insurance_value: 0,
+          quantity: 1,
+        },
+      ],
+    };
+    const pagination = {
+      limit: 5,
+      offset: 10,
+    };
+    const storeShippings = [
+      {
+        store: {
+          id: 1,
+          type: 'loja',
+          name: 'Teste',
+          cep: '87654321',
+          street: 'Rua Teste de Teste',
+          city: 'Recife',
+          number: 720,
+          neighborhood: 'Boa Viagem',
+          state: 'Pernambuco',
+          uf: 'PE',
+          region: 'Nordeste',
+          lat: '-8',
+          lng: '-34',
+        },
+        distance: {
+          text: '0.5 km',
+          value: 521,
+        },
+        shipping: [
+          {
+            id: 2,
+            name: 'Teste',
+            price: '15.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: {
+              min: 2,
+              max: 3,
+            },
+            company: {
+              id: 2,
+              name: 'Teste',
+            },
+          },
+        ],
+      },
+    ];
+
+    storeService.storesShipping = jest.fn().mockResolvedValue(storeShippings);
+
+    const result = await controller.storesShipping(cep, body, pagination);
+
+    expect(result.storeShippings).toEqual(storeShippings);
+    expect(result.pagination).toEqual(pagination);
+    expect(result.total).toBeLessThanOrEqual(result.pagination.limit);
+  });
+
+  it('should return shipping without pagination successfully', async () => {
+    const cep = '12345678';
+    const body = {
+      products: [
+        {
+          id: '1',
+          width: 15,
+          height: 10,
+          length: 20,
+          weight: 1,
+          insurance_value: 0,
+          quantity: 1,
+        },
+      ],
+    };
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+    const storeShippings = [
+      {
+        store: {
+          id: 1,
+          type: 'loja',
+          name: 'Teste',
+          cep: '87654321',
+          street: 'Rua Teste de Teste',
+          city: 'Recife',
+          number: 720,
+          neighborhood: 'Boa Viagem',
+          state: 'Pernambuco',
+          uf: 'PE',
+          region: 'Nordeste',
+          lat: '-8',
+          lng: '-34',
+        },
+        distance: {
+          text: '0.5 km',
+          value: 521,
+        },
+        shipping: [
+          {
+            id: 2,
+            name: 'Teste',
+            price: '15.00',
+            discount: '0',
+            currency: 'R$',
+            delivery_range: {
+              min: 2,
+              max: 3,
+            },
+            company: {
+              id: 2,
+              name: 'Teste',
+            },
+          },
+        ],
+      },
+    ];
+
+    storeService.storesShipping = jest.fn().mockResolvedValue(storeShippings);
+
+    const result = await controller.storesShipping(cep, body, pagination);
+
+    expect(result.storeShippings).toEqual(storeShippings);
+    expect(result.pagination).toEqual(pagination);
+    expect(result.total).toEqual(storeShippings.length);
   });
 });
