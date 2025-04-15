@@ -42,7 +42,7 @@ describe('MelhorEnvioApiService', () => {
     );
   });
 
-  it('should call freight method successfully', () => {
+  it('should call shipping method successfully', () => {
     const mockResponse = { data: {}, status: 200 };
     (httpService.post as jest.Mock).mockReturnValue(of(mockResponse));
 
@@ -60,7 +60,7 @@ describe('MelhorEnvioApiService', () => {
       },
     ];
 
-    const response = service.freight(from, to, products).subscribe((res) => {
+    const response = service.shipping(from, to, products).subscribe((res) => {
       expect(res).toEqual(mockResponse);
       expect(httpService.post).toHaveBeenCalledWith(
         'https://melhorenvio.com.br/api/v2/me/shipment/calculate',
@@ -75,7 +75,7 @@ describe('MelhorEnvioApiService', () => {
             reverse: false,
             non_commercial: true,
           },
-          services: "1,2",
+          services: '1,2',
           validate: true,
         },
         {

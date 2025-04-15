@@ -20,7 +20,7 @@ export class MelhorEnvioApiService {
     }
   }
 
-  public freight(
+  public shipping(
     from: string,
     to: string,
     products: Product[],
@@ -38,7 +38,7 @@ export class MelhorEnvioApiService {
           reverse: false,
           non_commercial: true,
         },
-        services: "1,2",
+        services: '1,2',
         validate: true,
       },
       {

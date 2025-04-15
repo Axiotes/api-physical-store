@@ -6,7 +6,7 @@ import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service'
 import { StoreInterface } from '../../common/interfaces/store.interface';
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
 import { Product } from '../../common/interfaces/product.interface';
-import { StoreFreights } from '../../common/interfaces/store-freights.interface';
+import { StoreShipping } from '../../common/interfaces/store-shipping.interface';
 import { LogisticUtilsService } from '../../common/utils/logistic-utils/logistic-utils.service';
 import { PaginationDto } from './dtos/pagination.dto';
 
@@ -41,11 +41,11 @@ export class StoreService {
     return closerStores;
   }
 
-  public async storesFreight(
+  public async storesShipping(
     cep: string,
     products: Product[],
     pagination: PaginationDto,
-  ): Promise<StoreFreights[]> {
+  ): Promise<StoreShipping[]> {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
 
@@ -61,7 +61,7 @@ export class StoreService {
     );
 
     const storesFarther50km: StoreRoute[] = [];
-    const storesWithin50km: StoreFreights[] = storesRoutes.map((storeRoute) => {
+    const storesWithin50km: StoreShipping[] = storesRoutes.map((storeRoute) => {
       if (storeRoute.distance.value > 50000) {
         storesFarther50km.push(storeRoute);
         return null;
@@ -70,7 +70,7 @@ export class StoreService {
       return {
         store: storeRoute.store,
         distance: storeRoute.distance,
-        freights: [
+        shipping: [
           {
             id: storeRoute.store.id,
             name: storeRoute.store.name,
@@ -89,20 +89,20 @@ export class StoreService {
       };
     });
 
-    const farther50kmFreights: StoreFreights[] =
+    const farther50kmShippings: StoreShipping[] =
       storesFarther50km.length > 0
-        ? await this.logisticUtilsService.getFreight(
+        ? await this.logisticUtilsService.getShipping(
             storesFarther50km,
             cep,
             products,
           )
         : [];
 
-    const storeFreights: StoreFreights[] = [
-      ...farther50kmFreights,
+    const storeShippings: StoreShipping[] = [
+      ...farther50kmShippings,
       ...storesWithin50km.filter((item) => item !== null),
     ].sort((a, b) => a.distance.value - b.distance.value);
 
-    return storeFreights;
+    return storeShippings;
   }
 }

@@ -3,7 +3,7 @@ import { LogisticUtilsService } from './logistic-utils.service';
 import { MelhorEnvioApiService } from '../../requests/melhor-envio-api/melhor-envio-api.service';
 import { StoreTypeEnum } from '../../enums/store-type.enum';
 import { Product } from '../../interfaces/product.interface';
-import { StoreFreights } from '../../interfaces/store-freights.interface';
+import { StoreShipping } from '../../interfaces/store-shipping.interface';
 import { of, throwError } from 'rxjs';
 import { StoreRoute } from '../../interfaces/store-route.interface';
 
@@ -18,7 +18,7 @@ describe('LogisticUtilsService', () => {
         {
           provide: MelhorEnvioApiService,
           useValue: {
-            freight: jest.fn(),
+            shipping: jest.fn(),
           },
         },
       ],
@@ -34,7 +34,7 @@ describe('LogisticUtilsService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return freights successfully', async () => {
+  it('should return shippings successfully', async () => {
     const stores: StoreRoute[] = [
       {
         store: {
@@ -83,14 +83,14 @@ describe('LogisticUtilsService', () => {
         quantity: 2,
       },
     ];
-    const mockStoresFreigths: StoreFreights[] = [
+    const mockStoresFreigths: StoreShipping[] = [
       {
         store: stores[0].store,
         distance: stores[0].distance,
-        freights: [
+        shipping: [
           {
             id: 1,
-            name: 'Freight 1',
+            name: 'Shipping 1',
             price: '10',
             discount: '0',
             currency: 'BRL',
@@ -105,7 +105,7 @@ describe('LogisticUtilsService', () => {
           },
           {
             id: 2,
-            name: 'Freight 2',
+            name: 'Shipping 2',
             price: '15',
             discount: '0',
             currency: 'BRL',
@@ -121,12 +121,12 @@ describe('LogisticUtilsService', () => {
         ],
       },
     ];
-    (melhorEnvioApiService.freight as jest.Mock).mockImplementation(() =>
+    (melhorEnvioApiService.shipping as jest.Mock).mockImplementation(() =>
       of({
         data: [
           {
             id: 1,
-            name: 'Freight 1',
+            name: 'Shipping 1',
             price: '10',
             discount: '0',
             currency: 'BRL',
@@ -141,7 +141,7 @@ describe('LogisticUtilsService', () => {
           },
           {
             id: 2,
-            name: 'Freight 2',
+            name: 'Shipping 2',
             price: '15',
             discount: '0',
             currency: 'BRL',
@@ -158,12 +158,12 @@ describe('LogisticUtilsService', () => {
       }),
     );
 
-    const result = await service.getFreight(stores, to, products);
+    const result = await service.getShipping(stores, to, products);
 
     expect(result).toEqual(mockStoresFreigths);
   });
 
-  it('should return empty array when no freights are found', async () => {
+  it('should return empty array when no shippings are found', async () => {
     const stores: StoreRoute[] = [
       {
         store: {
@@ -204,13 +204,13 @@ describe('LogisticUtilsService', () => {
       },
     ];
 
-    (melhorEnvioApiService.freight as jest.Mock).mockImplementation(() =>
+    (melhorEnvioApiService.shipping as jest.Mock).mockImplementation(() =>
       of({
         data: [],
       }),
     );
 
-    const result = await service.getFreight(stores, to, products);
+    const result = await service.getShipping(stores, to, products);
 
     expect(result).toEqual([]);
   });
@@ -256,11 +256,11 @@ describe('LogisticUtilsService', () => {
       },
     ];
 
-    (melhorEnvioApiService.freight as jest.Mock).mockImplementation(() => {
+    (melhorEnvioApiService.shipping as jest.Mock).mockImplementation(() => {
       return throwError(() => new Error('API Error'));
     });
 
-    await expect(service.getFreight(stores, to, products)).rejects.toThrow(
+    await expect(service.getShipping(stores, to, products)).rejects.toThrow(
       new Error('API Error'),
     );
   });

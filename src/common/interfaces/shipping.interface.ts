@@ -1,4 +1,4 @@
-export interface Freight {
+export interface Shipping {
   id: number;
   name: string;
   price: string;

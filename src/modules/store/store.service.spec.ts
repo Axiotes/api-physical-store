@@ -34,7 +34,7 @@ describe('StoreService', () => {
         {
           provide: LogisticUtilsService,
           useValue: {
-            getFreight: jest.fn(),
+            getShipping: jest.fn(),
             deliveryTime: jest.fn(),
           },
         },
@@ -204,7 +204,7 @@ describe('StoreService', () => {
     );
   });
 
-  it('should return freight ordered by distance with stores within and outside 50 km', async () => {
+  it('should return shipping ordered by distance with stores within and outside 50 km', async () => {
     const cep = '12345678';
     const address = '123 Main St, City, State';
     const coordinate = { lat: 40.7128, lng: -74.006 };
@@ -284,7 +284,7 @@ describe('StoreService', () => {
       {
         store: stores[0],
         distance: { value: 45000, text: '45 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'Store 1',
@@ -302,7 +302,7 @@ describe('StoreService', () => {
       {
         store: stores[1],
         distance: { value: 60000, text: '60 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'PAC',
@@ -345,11 +345,11 @@ describe('StoreService', () => {
     logisticUtilsService.deliveryTime = jest
       .fn()
       .mockReturnValue({ min: 4, max: 5 });
-    logisticUtilsService.getFreight = jest.fn().mockResolvedValue([
+    logisticUtilsService.getShipping = jest.fn().mockResolvedValue([
       {
         store: stores[1],
         distance: { value: 60000, text: '60 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'PAC',
@@ -391,7 +391,7 @@ describe('StoreService', () => {
     ];
     const pagination = { offset: 0, limit: 10 };
 
-    const result = await service.storesFreight(cep, products, pagination);
+    const result = await service.storesShipping(cep, products, pagination);
 
     expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
     expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
@@ -410,12 +410,12 @@ describe('StoreService', () => {
       coordinate,
       stores,
     );
-    expect(logisticUtilsService.getFreight).toHaveBeenCalledWith(
+    expect(logisticUtilsService.getShipping).toHaveBeenCalledWith(
       [storesRoutes[1]],
       cep,
       products,
     );
-    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(1);
+    expect(logisticUtilsService.getShipping).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockReturn);
   });
 
@@ -465,7 +465,7 @@ describe('StoreService', () => {
       {
         store: stores[0],
         distance: { value: 45000, text: '45 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'Store 1',
@@ -510,7 +510,7 @@ describe('StoreService', () => {
     ];
     const pagination = { offset: 0, limit: 10 };
 
-    const result = await service.storesFreight(cep, products, pagination);
+    const result = await service.storesShipping(cep, products, pagination);
 
     expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
     expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
@@ -529,7 +529,7 @@ describe('StoreService', () => {
       coordinate,
       stores,
     );
-    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(0);
+    expect(logisticUtilsService.getShipping).toHaveBeenCalledTimes(0);
     expect(result).toEqual(mockReturn);
   });
 
@@ -579,7 +579,7 @@ describe('StoreService', () => {
       {
         store: stores[1],
         distance: { value: 60000, text: '60 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'PAC',
@@ -619,11 +619,11 @@ describe('StoreService', () => {
       .fn()
       .mockReturnValue(createQueryBuilderMock);
     geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
-    logisticUtilsService.getFreight = jest.fn().mockResolvedValue([
+    logisticUtilsService.getShipping = jest.fn().mockResolvedValue([
       {
         store: stores[1],
         distance: { value: 60000, text: '60 km' },
-        freights: [
+        shippings: [
           {
             id: 1,
             name: 'PAC',
@@ -665,7 +665,7 @@ describe('StoreService', () => {
     ];
     const pagination = { offset: 0, limit: 10 };
 
-    const result = await service.storesFreight(cep, products, pagination);
+    const result = await service.storesShipping(cep, products, pagination);
 
     expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
     expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
@@ -684,12 +684,12 @@ describe('StoreService', () => {
       coordinate,
       stores,
     );
-    expect(logisticUtilsService.getFreight).toHaveBeenCalledWith(
+    expect(logisticUtilsService.getShipping).toHaveBeenCalledWith(
       [storesRoutes[0]],
       cep,
       products,
     );
-    expect(logisticUtilsService.getFreight).toHaveBeenCalledTimes(1);
+    expect(logisticUtilsService.getShipping).toHaveBeenCalledTimes(1);
     expect(logisticUtilsService.deliveryTime).toHaveBeenCalledTimes(0);
     expect(result).toEqual(mockReturn);
   });

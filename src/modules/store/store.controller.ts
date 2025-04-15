@@ -4,7 +4,7 @@ import { CepValidationPipe } from '../../common/pipes/cep-validation/cep-validat
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
 import { ApiOperation } from '@nestjs/swagger';
 import { PaginationDto } from './dtos/pagination.dto';
-import { StoreFreights } from '../../common/interfaces/store-freights.interface';
+import { StoreShipping } from '../../common/interfaces/store-shipping.interface';
 import { ValidatePaginationInterceptor } from '../../common/interceptors/validate-pagination/validate-pagination.interceptor';
 
 @UseInterceptors(ValidatePaginationInterceptor)
@@ -23,31 +23,32 @@ export class StoreController {
     return await this.storeService.closerStores(cep);
   }
 
-  @Get('freight/:cep')
+  @Get('shipping/:cep')
   public async storeByCep(
     @Param('cep', CepValidationPipe) cep: string,
     @Query() pagination: PaginationDto,
   ) {
-    const storeFreights: StoreFreights[] = await this.storeService.storesFreight(
-      cep,
-      [
-        {
-          id: '1',
-          width: 15,
-          height: 10,
-          length: 20,
-          weight: 1,
-          insurance_value: 0,
-          quantity: 1,
-        },
-      ],
-      pagination,
-    );
+    const storeShippings: StoreShipping[] =
+      await this.storeService.storesShipping(
+        cep,
+        [
+          {
+            id: '1',
+            width: 15,
+            height: 10,
+            length: 20,
+            weight: 1,
+            insurance_value: 0,
+            quantity: 1,
+          },
+        ],
+        pagination,
+      );
 
     return {
-      storeFreights,
+      storeShippings: storeShippings,
       pagination,
-      total: storeFreights.length,
+      total: storeShippings.length,
     };
   }
 }

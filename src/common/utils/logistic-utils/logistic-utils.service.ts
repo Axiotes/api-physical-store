@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
-import { StoreFreights } from '../../interfaces/store-freights.interface';
+import { StoreShipping } from '../../interfaces/store-shipping.interface';
 import { MelhorEnvioApiService } from '../../requests/melhor-envio-api/melhor-envio-api.service';
 import { StoreRoute } from '../../interfaces/store-route.interface';
 import { AxiosResponse } from 'axios';
@@ -10,14 +10,14 @@ import { AxiosResponse } from 'axios';
 export class LogisticUtilsService {
   constructor(private readonly melhorEnvioApiService: MelhorEnvioApiService) {}
 
-  public async getFreight(
+  public async getShipping(
     storesRoutes: StoreRoute[],
     to: string,
     products: Product[],
-  ): Promise<StoreFreights[]> {
-    const freightPromises = storesRoutes.map(async (storeRoute) => {
+  ): Promise<StoreShipping[]> {
+    const shippingPromises = storesRoutes.map(async (storeRoute) => {
       const res: AxiosResponse<MelhorEnvioResponse[]> = await lastValueFrom(
-        this.melhorEnvioApiService.freight(storeRoute.store.cep, to, products),
+        this.melhorEnvioApiService.shipping(storeRoute.store.cep, to, products),
       );
       const data: MelhorEnvioResponse[] = res.data;
 
@@ -28,7 +28,7 @@ export class LogisticUtilsService {
       return {
         store: storeRoute.store,
         distance: storeRoute.distance,
-        freights: data.map((item: MelhorEnvioResponse) => ({
+        shipping: data.map((item: MelhorEnvioResponse) => ({
           id: item.id,
           name: item.name,
           price: item.price,
@@ -40,12 +40,12 @@ export class LogisticUtilsService {
             name: item.company.name,
           },
         })),
-      } as StoreFreights;
+      } as StoreShipping;
     });
 
-    const freights = await Promise.all(freightPromises);
+    const shipping = await Promise.all(shippingPromises);
 
-    return freights.filter((item) => item !== null);
+    return shipping.filter((item) => item !== null);
   }
 
   public deliveryTime(distance: number) {
