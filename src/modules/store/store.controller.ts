@@ -32,6 +32,11 @@ export class StoreController {
     return await this.storeService.closerStores(cep);
   }
 
+  @ApiOperation({
+    summary: 'Retorna o frete para entrega de produtos ao CEP informado',
+    description:
+      "CEP deve ser informado no formato '00000000'. Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'. As dimensões do produto devem ser informadas em centímetros e o peso em kg",
+  })
   @Post('shipping/:cep')
   public async storeByCep(
     @Param('cep', CepValidationPipe) cep: string,
