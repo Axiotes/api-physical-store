@@ -70,7 +70,7 @@ export class StoreService {
       return {
         store: storeRoute.store,
         distance: storeRoute.distance,
-        shipping: [
+        shippings: [
           {
             id: storeRoute.store.id,
             name: storeRoute.store.name,

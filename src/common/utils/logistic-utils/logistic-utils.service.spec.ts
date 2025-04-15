@@ -87,7 +87,7 @@ describe('LogisticUtilsService', () => {
       {
         store: stores[0].store,
         distance: stores[0].distance,
-        shipping: [
+        shippings: [
           {
             id: 1,
             name: 'Shipping 1',

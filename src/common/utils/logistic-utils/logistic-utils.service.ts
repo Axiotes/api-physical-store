@@ -28,7 +28,7 @@ export class LogisticUtilsService {
       return {
         store: storeRoute.store,
         distance: storeRoute.distance,
-        shipping: data.map((item: MelhorEnvioResponse) => ({
+        shippings: data.map((item: MelhorEnvioResponse) => ({
           id: item.id,
           name: item.name,
           price: item.price,

@@ -5,5 +5,5 @@ import { StoreInterface } from './store.interface';
 export interface StoreShipping {
   store: StoreInterface;
   distance: RouteInfo;
-  shipping: Shipping[];
+  shippings: Shipping[];
 }

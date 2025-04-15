@@ -41,7 +41,7 @@ export class StoreController {
       "CEP deve ser informado no formato '00000000'. Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'. As dimensões do produto devem ser informadas em centímetros e o peso em kg",
   })
   @Post('shipping/:cep')
-  public async storeByCep(
+  public async storesShipping(
     @Param('cep', CepValidationPipe) cep: string,
     @Body() body: ShippingBodyDto,
     @Query() pagination: PaginationDto,
