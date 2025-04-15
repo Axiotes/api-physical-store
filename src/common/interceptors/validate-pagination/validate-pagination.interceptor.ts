@@ -30,8 +30,8 @@ export class ValidatePaginationInterceptor implements NestInterceptor {
       );
     }
 
-    const repo = this.dataSource.getRepository(entity);
-    const total = await repo.count();
+    const repository = this.dataSource.getRepository(entity);
+    const total = await repository.count();
 
     if (offset >= total) {
       throw new BadRequestException(
