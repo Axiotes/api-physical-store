@@ -18,7 +18,7 @@ import { ShippingBodyDto } from './dtos/shipping-body.dto';
 import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
 import { StoreInterface } from '../../common/interfaces/store.interface';
-import { UfValidationPipe } from 'src/common/pipes/uf-validation/uf-validation.pipe';
+import { UfValidationPipe } from '../../common/pipes/uf-validation/uf-validation.pipe';
 
 @OffsetValidated(Store)
 @UseInterceptors(ValidatePaginationInterceptor)
@@ -44,7 +44,18 @@ export class StoreController {
   }
 
   @Get('uf/:uf')
-  public async findByUf(@Param('uf', UfValidationPipe) uf: string) {}
+  public async findByUf(
+    @Param('uf', UfValidationPipe) uf: string,
+    @Query() pagination: PaginationDto,
+  ) {
+    const stores = await this.storeService.findBy<'uf'>('uf', uf, pagination);
+
+    return {
+      stores: stores,
+      pagination,
+      total: stores.length,
+    };
+  }
 
   @ApiOperation({
     summary: 'Retorna as lojas em até 100km do CEP informado',

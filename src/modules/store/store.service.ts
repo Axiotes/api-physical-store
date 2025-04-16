@@ -126,7 +126,7 @@ export class StoreService {
       .take(pagination.limit)
       .getMany();
 
-    if (!store) {
+    if (!store || store.length === 0) {
       throw new NotFoundException(`Store not found`);
     }
 
