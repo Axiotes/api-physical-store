@@ -18,6 +18,7 @@ describe('StoreService', () => {
     storeRepositoryMock = {
       find: jest.fn(),
       createQueryBuilder: jest.fn(),
+      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -745,5 +746,63 @@ describe('StoreService', () => {
       pagination.limit,
     );
     expect(storeRepositoryMock.createQueryBuilder().getMany).toHaveBeenCalled();
+  });
+
+  it('should find a store by id', async () => {
+    const store = new Store();
+    const id = 1;
+
+    storeRepositoryMock.findOne.mockResolvedValueOnce(store);
+
+    const result = await service.findBy<'id'>('id', id);
+
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledWith({
+      where: { id },
+    });
+    expect(result).toEqual(store);
+  });
+
+  it('should find a store by uf', async () => {
+    const store = new Store();
+    const uf = '12345678901';
+
+    storeRepositoryMock.findOne.mockResolvedValueOnce(store);
+
+    const result = await service.findBy<'uf'>('uf', uf);
+
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledWith({
+      where: { uf },
+    });
+    expect(result).toEqual(store);
+  });
+
+  it('should throw an error if the store is not found by id', async () => {
+    const id = 1;
+
+    storeRepositoryMock.findOne.mockResolvedValueOnce(null);
+
+    await expect(service.findBy<'id'>('id', id)).rejects.toThrow(
+      new NotFoundException(`Store not found`),
+    );
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledWith({
+      where: { id },
+    });
+  });
+
+  it('should throw an error if the reader is not found by uf', async () => {
+    const uf = 'AM';
+
+    storeRepositoryMock.findOne.mockResolvedValueOnce(null);
+
+    await expect(service.findBy<'uf'>('uf', uf)).rejects.toThrow(
+      new NotFoundException(`Store not found`),
+    );
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledTimes(1);
+    expect(storeRepositoryMock.findOne).toHaveBeenCalledWith({
+      where: { uf },
+    });
   });
 });
