@@ -25,6 +25,11 @@ import { StoreInterface } from '../../common/interfaces/store.interface';
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
+  @ApiOperation({
+    summary: 'Retorna todas as lojas',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
   @Get()
   public async findAll(@Query() pagination: PaginationDto) {
     const stores: StoreInterface[] =
