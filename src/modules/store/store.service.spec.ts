@@ -17,6 +17,7 @@ describe('StoreService', () => {
   beforeEach(async () => {
     storeRepositoryMock = {
       find: jest.fn(),
+      createQueryBuilder: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -692,5 +693,57 @@ describe('StoreService', () => {
     expect(logisticUtilsService.getShipping).toHaveBeenCalledTimes(1);
     expect(logisticUtilsService.deliveryTime).toHaveBeenCalledTimes(0);
     expect(result).toEqual(mockReturn);
+  });
+
+  it('should return all stores without pagination', async () => {
+    const pagination = { offset: undefined, limit: undefined };
+    const mockStores = [
+      { id: 1, name: 'Store 1' },
+      { id: 2, name: 'Store 2' },
+    ];
+
+    const createQueryBuilderMock = {
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(mockStores),
+    };
+
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const result = await service.findAll(pagination);
+
+    expect(result).toEqual(mockStores);
+    expect(storeRepositoryMock.createQueryBuilder().getMany).toHaveBeenCalled();
+  });
+
+  it('should return stores with pagination', async () => {
+    const pagination = { offset: 10, limit: 5 };
+    const mockStores = [
+      { id: 1, name: 'Store 1' },
+      { id: 2, name: 'Store 2' },
+    ];
+
+    const createQueryBuilderMock = {
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(mockStores),
+    };
+
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const result = await service.findAll(pagination);
+
+    expect(result).toEqual(mockStores);
+    expect(storeRepositoryMock.createQueryBuilder().skip).toHaveBeenCalledWith(
+      pagination.offset,
+    );
+    expect(storeRepositoryMock.createQueryBuilder().take).toHaveBeenCalledWith(
+      pagination.limit,
+    );
+    expect(storeRepositoryMock.createQueryBuilder().getMany).toHaveBeenCalled();
   });
 });
