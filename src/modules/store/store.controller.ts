@@ -17,7 +17,7 @@ import { ValidatePaginationInterceptor } from '../../common/interceptors/validat
 import { ShippingBodyDto } from './dtos/shipping-body.dto';
 import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
-import { StoreInterface } from 'src/common/interfaces/store.interface';
+import { StoreInterface } from '../../common/interfaces/store.interface';
 
 @OffsetValidated(Store)
 @UseInterceptors(ValidatePaginationInterceptor)
