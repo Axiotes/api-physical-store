@@ -18,6 +18,7 @@ import { ShippingBodyDto } from './dtos/shipping-body.dto';
 import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
 import { StoreInterface } from '../../common/interfaces/store.interface';
+import { UfValidationPipe } from 'src/common/pipes/uf-validation/uf-validation.pipe';
 
 @OffsetValidated(Store)
 @UseInterceptors(ValidatePaginationInterceptor)
@@ -41,6 +42,9 @@ export class StoreController {
       total: stores.length,
     };
   }
+
+  @Get('uf/:uf')
+  public async findByUf(@Param('uf', UfValidationPipe) uf: string) {}
 
   @ApiOperation({
     summary: 'Retorna as lojas em até 100km do CEP informado',
