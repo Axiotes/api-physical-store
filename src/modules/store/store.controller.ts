@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseInterceptors,
@@ -44,7 +45,22 @@ export class StoreController {
   }
 
   @ApiOperation({
-    summary: 'Retorna do UF informado',
+    summary: 'Retorna loja com ID informado',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
+  @Get('id/:id')
+  public async findById(@Param('id', ParseIntPipe) id: number) {
+    const stores = await this.storeService.findBy<'id'>('id', id, {
+      limit: 1,
+      offset: undefined,
+    });
+
+    return stores[0];
+  }
+
+  @ApiOperation({
+    summary: 'Retorna lojas do UF informado',
     description:
       "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
   })
