@@ -43,6 +43,11 @@ export class StoreController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Retorna do UF informado',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
   @Get('uf/:uf')
   public async findByUf(
     @Param('uf', UfValidationPipe) uf: string,
