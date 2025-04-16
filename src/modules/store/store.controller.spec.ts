@@ -279,4 +279,132 @@ describe('StoreController', () => {
     expect(result.total).toBeLessThanOrEqual(pagination.limit);
     expect(result.stores[0].id).toEqual(pagination.offset + 1);
   });
+
+  it('should return stores according to uf successfully', async () => {
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-001',
+        street: 'Rua Teste 1',
+        city: 'Cidade Teste 1',
+        number: 1,
+        neighborhood: 'Bairro Teste 1',
+        state: 'UF Teste 1',
+        uf: 'PE',
+        region: 'Região Teste 1',
+        lat: '1',
+        lng: '1',
+      },
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'PE',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+      {
+        id: 3,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 3',
+        cep: '00000-001',
+        street: 'Rua Teste 3',
+        city: 'Cidade Teste 3',
+        number: 3,
+        neighborhood: 'Bairro Teste 3',
+        state: 'UF Teste 3',
+        uf: 'MG',
+        region: 'Região Teste 3',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+    const uf = 'PE';
+    const ufStores = stores.filter((store) => store.uf === uf);
+
+    storeService.findBy = jest.fn().mockResolvedValue(ufStores);
+
+    const result = await controller.findByUf(uf, pagination);
+
+    expect(result.total).toEqual(ufStores.length);
+    expect(result.stores).toEqual(ufStores);
+    result.stores.map((store) => {
+      expect(store.uf).toEqual(uf);
+    });
+  });
+
+  it('should return stores according to id successfully', async () => {
+    const stores = [
+      {
+        id: 1,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 1',
+        cep: '00000-001',
+        street: 'Rua Teste 1',
+        city: 'Cidade Teste 1',
+        number: 1,
+        neighborhood: 'Bairro Teste 1',
+        state: 'UF Teste 1',
+        uf: 'PE',
+        region: 'Região Teste 1',
+        lat: '1',
+        lng: '1',
+      },
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'PE',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+      {
+        id: 3,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 3',
+        cep: '00000-001',
+        street: 'Rua Teste 3',
+        city: 'Cidade Teste 3',
+        number: 3,
+        neighborhood: 'Bairro Teste 3',
+        state: 'UF Teste 3',
+        uf: 'MG',
+        region: 'Região Teste 3',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+    const id = 1;
+    const idStores = stores.filter((store) => store.id === id);
+
+    storeService.findBy = jest.fn().mockResolvedValue(idStores);
+
+    const result = await controller.findById(id);
+
+    expect(result.id).toEqual(id);
+  });
 });

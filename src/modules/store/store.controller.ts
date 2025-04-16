@@ -53,7 +53,7 @@ export class StoreController {
   public async findById(@Param('id', ParseIntPipe) id: number) {
     const stores = await this.storeService.findBy<'id'>('id', id, {
       limit: 1,
-      offset: undefined,
+      offset: null,
     });
 
     return stores[0];
