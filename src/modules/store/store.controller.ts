@@ -17,12 +17,30 @@ import { ValidatePaginationInterceptor } from '../../common/interceptors/validat
 import { ShippingBodyDto } from './dtos/shipping-body.dto';
 import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
+import { StoreInterface } from '../../common/interfaces/store.interface';
 
 @OffsetValidated(Store)
 @UseInterceptors(ValidatePaginationInterceptor)
 @Controller('store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
+
+  @ApiOperation({
+    summary: 'Retorna todas as lojas',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
+  @Get()
+  public async findAll(@Query() pagination: PaginationDto) {
+    const stores: StoreInterface[] =
+      await this.storeService.findAll(pagination);
+
+    return {
+      stores,
+      pagination,
+      total: stores.length,
+    };
+  }
 
   @ApiOperation({
     summary: 'Retorna as lojas em até 100km do CEP informado',
@@ -37,8 +55,9 @@ export class StoreController {
 
   @ApiOperation({
     summary: 'Retorna o frete para entrega de produtos ao CEP informado',
-    description:
-      "CEP deve ser informado no formato '00000000'. Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'. As dimensões do produto devem ser informadas em centímetros e o peso em kg",
+    description: `CEP deve ser informado no formato '00000000'. 
+      Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'. 
+      As dimensões do produto devem ser informadas em centímetros e o peso em kg`,
   })
   @Post('shipping/:cep')
   public async storesShipping(

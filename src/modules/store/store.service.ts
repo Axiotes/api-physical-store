@@ -105,4 +105,12 @@ export class StoreService {
 
     return storeShippings;
   }
+
+  public async findAll(pagination: PaginationDto): Promise<StoreInterface[]> {
+    return await this.storeRepository
+      .createQueryBuilder('store')
+      .skip(pagination.offset)
+      .take(pagination.limit)
+      .getMany();
+  }
 }

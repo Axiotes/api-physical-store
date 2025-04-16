@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
 import { DataSource } from 'typeorm';
+import { StoreTypeEnum } from '../../common/enums/store-type.enum';
 
 describe('StoreController', () => {
   let controller: StoreController;
@@ -199,5 +200,83 @@ describe('StoreController', () => {
     expect(result.storeShippings).toEqual(storeShippings);
     expect(result.pagination).toEqual(pagination);
     expect(result.total).toEqual(storeShippings.length);
+  });
+
+  it('should return all stores without pagination', async () => {
+    const stores = [
+      {
+        id: 2,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 2',
+        cep: '00000-001',
+        street: 'Rua Teste 2',
+        city: 'Cidade Teste 2',
+        number: 2,
+        neighborhood: 'Bairro Teste 2',
+        state: 'UF Teste 2',
+        uf: 'UF 2',
+        region: 'Região Teste 2',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    storeService.findAll = jest.fn().mockResolvedValue(stores);
+
+    const result = await controller.findAll(pagination);
+
+    expect(result.stores).toEqual(stores);
+    expect(result.total).toEqual(stores.length);
+  });
+
+  it('should return all stores with pagination', async () => {
+    const stores = [
+      {
+        id: 6,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 6',
+        cep: '00000-001',
+        street: 'Rua Teste 6',
+        city: 'Cidade Teste 6',
+        number: 6,
+        neighborhood: 'Bairro Teste 6',
+        state: 'UF Teste 6',
+        uf: 'UF 6',
+        region: 'Região Teste 6',
+        lat: '1',
+        lng: '1',
+      },
+      {
+        id: 7,
+        type: StoreTypeEnum.PDV,
+        name: 'Store 7',
+        cep: '00000-001',
+        street: 'Rua Teste 7',
+        city: 'Cidade Teste 7',
+        number: 7,
+        neighborhood: 'Bairro Teste 7',
+        state: 'UF Teste 7',
+        uf: 'UF 7',
+        region: 'Região Teste 7',
+        lat: '1',
+        lng: '1',
+      },
+    ];
+    const pagination = {
+      limit: 5,
+      offset: 5,
+    };
+
+    storeService.findAll = jest.fn().mockResolvedValue(stores);
+
+    const result = await controller.findAll(pagination);
+
+    expect(result.stores).toEqual(stores);
+    expect(result.total).toBeLessThanOrEqual(pagination.limit);
+    expect(result.stores[0].id).toEqual(pagination.offset + 1);
   });
 });
