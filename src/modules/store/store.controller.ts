@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   UseInterceptors,
@@ -18,6 +19,7 @@ import { ShippingBodyDto } from './dtos/shipping-body.dto';
 import { OffsetValidated } from '../../common/decorators/offset-validate.decorator';
 import { Store } from './store.entity';
 import { StoreInterface } from '../../common/interfaces/store.interface';
+import { UfValidationPipe } from '../../common/pipes/uf-validation/uf-validation.pipe';
 
 @OffsetValidated(Store)
 @UseInterceptors(ValidatePaginationInterceptor)
@@ -37,6 +39,40 @@ export class StoreController {
 
     return {
       stores,
+      pagination,
+      total: stores.length,
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Retorna loja com ID informado',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
+  @Get('id/:id')
+  public async findById(@Param('id', ParseIntPipe) id: number) {
+    const stores = await this.storeService.findBy<'id'>('id', id, {
+      limit: 1,
+      offset: null,
+    });
+
+    return stores[0];
+  }
+
+  @ApiOperation({
+    summary: 'Retorna lojas do UF informado',
+    description:
+      "Caso deseje utilizar o query param 'offset', é necessário utiliza-lo em conjunto com o 'limit'",
+  })
+  @Get('uf/:uf')
+  public async findByUf(
+    @Param('uf', UfValidationPipe) uf: string,
+    @Query() pagination: PaginationDto,
+  ) {
+    const stores = await this.storeService.findBy<'uf'>('uf', uf, pagination);
+
+    return {
+      stores: stores,
       pagination,
       total: stores.length,
     };

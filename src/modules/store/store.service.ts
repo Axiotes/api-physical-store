@@ -113,4 +113,23 @@ export class StoreService {
       .take(pagination.limit)
       .getMany();
   }
+
+  public async findBy<T extends keyof StoreInterface>(
+    key: T,
+    value: StoreInterface[T],
+    pagination: PaginationDto,
+  ): Promise<StoreInterface[]> {
+    const store = await this.storeRepository
+      .createQueryBuilder('store')
+      .where(`store.${key} = :value`, { value })
+      .skip(pagination.offset)
+      .take(pagination.limit)
+      .getMany();
+
+    if (!store || store.length === 0) {
+      throw new NotFoundException(`Store not found`);
+    }
+
+    return store;
+  }
 }

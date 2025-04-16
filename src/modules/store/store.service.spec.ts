@@ -746,4 +746,116 @@ describe('StoreService', () => {
     );
     expect(storeRepositoryMock.createQueryBuilder().getMany).toHaveBeenCalled();
   });
+
+  it('should find a store by id', async () => {
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const store = new Store();
+    const id = 1;
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    createQueryBuilderMock.getMany.mockResolvedValueOnce([store]);
+
+    const result = await service.findBy<'id'>('id', id, pagination);
+
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledWith(
+      'store',
+    );
+    expect(createQueryBuilderMock.where).toHaveBeenCalledWith(
+      'store.id = :value',
+      { value: id },
+    );
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledWith(pagination.offset);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledWith(pagination.limit);
+    expect(result).toEqual([store]);
+  });
+
+  it('should find a store by uf', async () => {
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const store = new Store();
+    const uf = '12345678901';
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    createQueryBuilderMock.getMany.mockResolvedValueOnce([store]);
+
+    const result = await service.findBy<'uf'>('uf', uf, pagination);
+
+    expect(storeRepositoryMock.createQueryBuilder).toHaveBeenCalledWith(
+      'store',
+    );
+    expect(createQueryBuilderMock.where).toHaveBeenCalledWith(
+      'store.uf = :value',
+      { value: uf },
+    );
+    expect(createQueryBuilderMock.skip).toHaveBeenCalledWith(pagination.offset);
+    expect(createQueryBuilderMock.take).toHaveBeenCalledWith(pagination.limit);
+    expect(result).toEqual([store]);
+  });
+
+  it('should throw an error if the store is not found by id', async () => {
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const id = 1;
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    await expect(service.findBy<'id'>('id', id, pagination)).rejects.toThrow(
+      new NotFoundException(`Store not found`),
+    );
+  });
+
+  it('should throw an error if the reader is not found by uf', async () => {
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
+
+    const uf = 'AM';
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    await expect(service.findBy<'uf'>('uf', uf, pagination)).rejects.toThrow(
+      new NotFoundException(`Store not found`),
+    );
+  });
 });
