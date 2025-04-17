@@ -1,85 +1,100 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Physical Store - Desafio 03
+API desenvolvida utilizando NEST, com objetivo gerenciar lojas físicas de um eCommerce
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Instalação do Projeto
+### Pré-requisitos
+1. **Git**
+    - É necessário que tenha o **git** na sua última versão
+    - Verificar se o git está instalado:
+    ```bash
+    git --version
+    ```
+    - Caso não esteja instalado, é possível instalar através do [Downloads - Git](https://git-scm.com/downloads)
+2. Node
+    - Verificar se o node está instalado:
+    ```bash
+    node --version
+    ```
+    - Caso não esteja instalado, é possível instalar através do [Node.js - Run JavaScript Everywhere](https://nodejs.org/en)
+4. MySQL
+    - É necessário que tenha o **MySQL** na sua última versão
+    - Verificar se o MySQL está instalado:
+    ```bash
+    mysql --version
+    ```
+    - Caso não esteja instalado, é possível instalar através do [MySQL Downloads](https://www.mysql.com/downloads/)
+      
+### Processo de instalação e execução do projeto
+1. Clonar o repositório na sua máquina
+    ```bash
+    git clone git@github.com:Axiotes/git@github.com:Axiotes/api-physical-store.git
+    ```
+2. Entrar no diretório
+    ```bash
+    cd api-physical-store
+    ```
+3. Variáveis de ambiente  
+    Renomeie o arquivo `env_example.txt` para `.env` e atribua valores ao respectivas variáveis, exemplo:
+    ```
+    DB_HOST="localhost"
+    DB_PORT=3306
+    DB_USERNAME="root"
+    DB_PASSWORD="root"
+    DATABASE="physical_store_db"
+    ```
+    Na aplicação são utilizadas APIs do Google Maps ([Geocoding](https://developers.google.com/maps/documentation/geocoding/overview?hl=pt-br) e [Directions](https://developers.google.com/maps/documentation/directions/overview?hl=pt-br)) e do [Melhor Envio](https://melhorenvio.com.br/painel), portanto é necessário obter uma API KEY para utilizá-las  
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+4. Criação de um banco de dados  
+    No seu SGBD do MySQL crie o banco de dados
+    ```sql
+    CREATE DATABASE physical_store_db
+    ```
 
-## Description
+5. Instalar dependências
+    ```bash
+    npm i
+    ```
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+6. Executar aplicação  
+    Existem dois scripts para execução da aplicação
+    ```bash
+    npm start # Executa API
+    ```
+    ```bash
+    npm run dev # Executa API em desenvolvimento
+    ```
 
-## Project setup
 
-```bash
-$ npm install
-```
+## Scripts
+### Migrations
+1. Criar uma nova migration
+     ```bash
+     npm run migration:generate src/db/migrations/nome-migration
+     ```
+2. Executar migrations
+     ```bash
+     npm run migration:run
+     ```
+3. Reverter migrations
+    ```bash
+    npm run migration:revert
+    ```
 
-## Compile and run the project
+### Seed
+1. Executar seeds
+    ```bash
+    npm run seed
+    ```
+2. Executar seeds de dados falsos
+    ```bash
+    npm run seed:fake-data
+    ```
 
-```bash
-# development
-$ npm run start
+### Testes
+1. Testes unitários
+    ```bash
+    npm test
+    ```
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Documentação
+Todos os endpoints foram documentados no **swagger**, no navegador acesse `http://localhost:3000/api/docs`. Para utiliza-lo é necessário está com a api em execução
