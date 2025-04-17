@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
 import { Repository } from 'typeorm';
 import { GeoUtilsService } from '../../common/utils/geo-utils/geo-utils.service';
-import { StoreInterface } from '../../common/interfaces/store.interface';
 import { StoreRoute } from '../../common/interfaces/store-route.interface';
 import { Product } from '../../common/interfaces/product.interface';
 import { StoreShipping } from '../../common/interfaces/store-shipping.interface';
 import { LogisticUtilsService } from '../../common/utils/logistic-utils/logistic-utils.service';
 import { PaginationDto } from './dtos/pagination.dto';
+import { StorePDV } from 'src/common/interfaces/store-pdv.interface';
+import { StoreType } from 'src/common/types/store-type.type';
 
 @Injectable()
 export class StoreService {
@@ -26,7 +27,7 @@ export class StoreService {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
 
-    const stores: StoreInterface[] = await this.storeRepository
+    const stores: Store[] = await this.storeRepository
       .createQueryBuilder('store')
       .where('store.type = :type', { type: 'pdv' })
       .skip(pagination.offset)
@@ -35,7 +36,7 @@ export class StoreService {
 
     const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
       { lat, lng },
-      stores,
+      stores as StorePDV[],
     );
 
     const closerStores: StoreRoute[] = storesRoutes
@@ -57,7 +58,7 @@ export class StoreService {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
 
-    const stores: StoreInterface[] = await this.storeRepository
+    const stores: Store[] = await this.storeRepository
       .createQueryBuilder('store')
       .where('store.type = :type', { type: 'pdv' })
       .skip(pagination.offset)
@@ -66,7 +67,7 @@ export class StoreService {
 
     const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
       { lat, lng },
-      stores,
+      stores as StorePDV[],
     );
 
     const storesFarther50km: StoreRoute[] = [];
@@ -115,7 +116,7 @@ export class StoreService {
     return storeShippings;
   }
 
-  public async findAll(pagination: PaginationDto): Promise<StoreInterface[]> {
+  public async findAll(pagination: PaginationDto): Promise<StoreType[]> {
     return await this.storeRepository
       .createQueryBuilder('store')
       .skip(pagination.offset)
@@ -123,11 +124,11 @@ export class StoreService {
       .getMany();
   }
 
-  public async findBy<T extends keyof StoreInterface>(
+  public async findBy<T extends keyof Store>(
     key: T,
-    value: StoreInterface[T],
+    value: Store[T],
     pagination: PaginationDto,
-  ): Promise<StoreInterface[]> {
+  ): Promise<Store[]> {
     const store = await this.storeRepository
       .createQueryBuilder('store')
       .where(`store.${key} = :value`, { value })

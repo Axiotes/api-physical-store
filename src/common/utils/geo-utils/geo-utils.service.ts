@@ -5,9 +5,9 @@ import { ViaCepResponse } from '../../interfaces/via-cep-response.interface';
 import { lastValueFrom } from 'rxjs';
 import { LatLng } from '../../interfaces/lat-lng.interface';
 import { GeocodeResponse } from '../../interfaces/geocode-response.interface';
-import { StoreInterface } from 'src/common/interfaces/store.interface';
 import { DirectionsResponse } from 'src/common/interfaces/diretions-response.interface';
 import { StoreRoute } from 'src/common/interfaces/store-route.interface';
+import { StorePDV } from 'src/common/interfaces/store-pdv.interface';
 
 @Injectable()
 export class GeoUtilsService {
@@ -40,7 +40,7 @@ export class GeoUtilsService {
 
   public async getDistance(
     origin: LatLng,
-    stores: StoreInterface[],
+    stores: StorePDV[],
   ): Promise<StoreRoute[]> {
     const diretionsPromises = stores.map(async (store) => {
       const res = await lastValueFrom(
