@@ -59,7 +59,7 @@ describe('StoreController', () => {
       offset: undefined,
     };
     const mockResponse = {
-      stores: closerReturn,
+      data: closerReturn,
       pagination,
       total: closerReturn.length,
     };
@@ -137,7 +137,7 @@ describe('StoreController', () => {
 
     const result = await controller.storesShipping(cep, body, pagination);
 
-    expect(result.storeShippings).toEqual(storeShippings);
+    expect(result.data).toEqual(storeShippings);
     expect(result.pagination).toEqual(pagination);
     expect(result.total).toBeLessThanOrEqual(result.pagination.limit);
   });
@@ -206,7 +206,7 @@ describe('StoreController', () => {
 
     const result = await controller.storesShipping(cep, body, pagination);
 
-    expect(result.storeShippings).toEqual(storeShippings);
+    expect(result.data).toEqual(storeShippings);
     expect(result.pagination).toEqual(pagination);
     expect(result.total).toEqual(storeShippings.length);
   });
@@ -238,7 +238,7 @@ describe('StoreController', () => {
 
     const result = await controller.findAll(pagination);
 
-    expect(result.stores).toEqual(stores);
+    expect(result.data).toEqual(stores);
     expect(result.total).toEqual(stores.length);
   });
 
@@ -284,9 +284,9 @@ describe('StoreController', () => {
 
     const result = await controller.findAll(pagination);
 
-    expect(result.stores).toEqual(stores);
+    expect(result.data).toEqual(stores);
     expect(result.total).toBeLessThanOrEqual(pagination.limit);
-    expect(result.stores[0].id).toEqual(pagination.offset + 1);
+    expect(result.data[0].id).toEqual(pagination.offset + 1);
   });
 
   it('should return stores according to uf successfully', async () => {
@@ -349,8 +349,8 @@ describe('StoreController', () => {
     const result = await controller.findByUf(uf, pagination);
 
     expect(result.total).toEqual(ufStores.length);
-    expect(result.stores).toEqual(ufStores);
-    result.stores.map((store) => {
+    expect(result.data).toEqual(ufStores);
+    result.data.map((store) => {
       expect(store.uf).toEqual(uf);
     });
   });
@@ -414,6 +414,6 @@ describe('StoreController', () => {
 
     const result = await controller.findById(id);
 
-    expect(result.id).toEqual(id);
+    expect(result.data.id).toEqual(id);
   });
 });
