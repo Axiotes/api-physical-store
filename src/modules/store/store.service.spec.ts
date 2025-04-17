@@ -110,20 +110,31 @@ describe('StoreService', () => {
         duration: { value: 3600, text: '1 hour' },
       },
     ];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(stores),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
 
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
-    storeRepositoryMock.find = jest.fn().mockResolvedValue(stores);
     geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
 
-    const result = await service.closerStores(cep);
+    const result = await service.closerStores(cep, pagination);
 
     expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
     expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
     expect(geoUtilsService.getCoordinate).toHaveBeenCalledWith(address);
     expect(geoUtilsService.getCoordinate).toHaveBeenCalledTimes(1);
-    expect(storeRepositoryMock.find).toHaveBeenCalled();
-    expect(storeRepositoryMock.find).toHaveBeenCalledTimes(1);
     expect(geoUtilsService.getDistance).toHaveBeenCalledWith(
       coordinate,
       stores,
@@ -184,21 +195,32 @@ describe('StoreService', () => {
       },
     ];
     const storesRoutes = [];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+
+    const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(stores),
+    };
+    storeRepositoryMock.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(createQueryBuilderMock);
 
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
-    storeRepositoryMock.find = jest.fn().mockResolvedValue(stores);
     geoUtilsService.getDistance = jest.fn().mockResolvedValue(storesRoutes);
 
-    await expect(service.closerStores(cep)).rejects.toThrow(
+    await expect(service.closerStores(cep, pagination)).rejects.toThrow(
       new NotFoundException('No stores found within 100km radius'),
     );
     expect(geoUtilsService.getAddress).toHaveBeenCalledWith(cep);
     expect(geoUtilsService.getAddress).toHaveBeenCalledTimes(1);
     expect(geoUtilsService.getCoordinate).toHaveBeenCalledWith(address);
     expect(geoUtilsService.getCoordinate).toHaveBeenCalledTimes(1);
-    expect(storeRepositoryMock.find).toHaveBeenCalled();
-    expect(storeRepositoryMock.find).toHaveBeenCalledTimes(1);
     expect(geoUtilsService.getDistance).toHaveBeenCalledWith(
       coordinate,
       stores,
@@ -335,6 +357,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),
@@ -486,6 +509,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),
@@ -612,6 +636,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),

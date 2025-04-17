@@ -1,9 +1,14 @@
+import { StoreType } from 'src/common/types/store-type.type';
 import { StoreTypeEnum } from '../../common/enums/store-type.enum';
-import { StoreInterface } from '../../common/interfaces/store.interface';
 
-export const STORES: StoreInterface[] = [
+export const STORES: StoreType[] = [
   {
     id: 1,
+    type: StoreTypeEnum.LOJA,
+    name: 'Super Compras',
+  },
+  {
+    id: 2,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '50050000',
@@ -18,8 +23,8 @@ export const STORES: StoreInterface[] = [
     lng: '-34.8808194489028',
   },
   {
-    id: 2,
-    type: StoreTypeEnum.LOJA,
+    id: 3,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '51021310',
     street: 'Rua Ribeiro de Brito',
@@ -33,7 +38,7 @@ export const STORES: StoreInterface[] = [
     lng: '-34.90342533223724',
   },
   {
-    id: 3,
+    id: 4,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '51130010',
@@ -48,7 +53,7 @@ export const STORES: StoreInterface[] = [
     lng: '-34.90585091689286',
   },
   {
-    id: 4,
+    id: 5,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '52050150',
@@ -63,8 +68,8 @@ export const STORES: StoreInterface[] = [
     lng: '-34.906116208577146',
   },
   {
-    id: 5,
-    type: StoreTypeEnum.LOJA,
+    id: 6,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '50610000',
     street: 'Rua Real da Torre',
@@ -78,8 +83,8 @@ export const STORES: StoreInterface[] = [
     lng: '-34.90838753223805',
   },
   {
-    id: 6,
-    type: StoreTypeEnum.LOJA,
+    id: 7,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '40080001',
     street: 'Avenida Sete de Setembro',
@@ -93,7 +98,7 @@ export const STORES: StoreInterface[] = [
     lng: '-38.52178572601932',
   },
   {
-    id: 7,
+    id: 8,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '60165011',
@@ -108,7 +113,7 @@ export const STORES: StoreInterface[] = [
     lng: '-38.510861156007024',
   },
   {
-    id: 8,
+    id: 9,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '30130174',
@@ -123,8 +128,8 @@ export const STORES: StoreInterface[] = [
     lng: '-43.93779610892537',
   },
   {
-    id: 9,
-    type: StoreTypeEnum.LOJA,
+    id: 10,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '32670544',
     street: 'Avenida Amazonas',
@@ -138,7 +143,7 @@ export const STORES: StoreInterface[] = [
     lng: '-44.20920322883606',
   },
   {
-    id: 10,
+    id: 11,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '20010974',
@@ -153,8 +158,8 @@ export const STORES: StoreInterface[] = [
     lng: '-43.175995759366536',
   },
   {
-    id: 11,
-    type: StoreTypeEnum.LOJA,
+    id: 12,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '01001001',
     street: 'Praça da Sé',
@@ -168,7 +173,7 @@ export const STORES: StoreInterface[] = [
     lng: '-46.634337214091325',
   },
   {
-    id: 12,
+    id: 13,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '80020310',
@@ -183,8 +188,8 @@ export const STORES: StoreInterface[] = [
     lng: '-49.27215015300207',
   },
   {
-    id: 13,
-    type: StoreTypeEnum.LOJA,
+    id: 14,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '90010320',
     street: 'Rua Cel. Fernando Machado',
@@ -198,7 +203,7 @@ export const STORES: StoreInterface[] = [
     lng: '-51.2288668429482',
   },
   {
-    id: 14,
+    id: 15,
     type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '41640280',
@@ -213,8 +218,8 @@ export const STORES: StoreInterface[] = [
     lng: '-38.37254837081367',
   },
   {
-    id: 15,
-    type: StoreTypeEnum.LOJA,
+    id: 16,
+    type: StoreTypeEnum.PDV,
     name: 'Super Compras',
     cep: '60170001',
     street: 'Avenida Des. Moreira',

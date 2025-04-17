@@ -6,6 +6,7 @@ import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { NotFoundException } from '@nestjs/common';
 import { StoreTypeEnum } from '../../enums/store-type.enum';
+import { StorePDV } from 'src/common/interfaces/store-pdv.interface';
 
 describe('GeoUtilsService', () => {
   let service: GeoUtilsService;
@@ -128,7 +129,7 @@ describe('GeoUtilsService', () => {
 
   it('should return distances successfully', async () => {
     const origin = { lat: 10, lng: 10 };
-    const stores = [
+    const stores: StorePDV[] = [
       {
         id: 1,
         type: StoreTypeEnum.PDV,
@@ -220,7 +221,7 @@ describe('GeoUtilsService', () => {
 
   it('should not return any distance', async () => {
     const origin = { lat: 10, lng: 10 };
-    const stores = [
+    const stores: StorePDV[] = [
       {
         id: 1,
         type: StoreTypeEnum.PDV,
