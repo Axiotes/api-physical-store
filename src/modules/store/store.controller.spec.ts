@@ -41,7 +41,7 @@ describe('StoreController', () => {
 
   it('should return closer stores successfuly', async () => {
     const cep = '12345678';
-    const mockResponse = [
+    const closerReturn = [
       {
         store: 'Store 1',
         distance: {
@@ -54,13 +54,22 @@ describe('StoreController', () => {
         },
       },
     ];
+    const pagination = {
+      limit: undefined,
+      offset: undefined,
+    };
+    const mockResponse = {
+      stores: closerReturn,
+      pagination,
+      total: closerReturn.length,
+    };
 
-    storeService.closerStores = jest.fn().mockResolvedValue(mockResponse);
+    storeService.closerStores = jest.fn().mockResolvedValue(closerReturn);
 
-    const result = await controller.closerStores(cep);
+    const result = await controller.closerStores(cep, pagination);
 
     expect(storeService.closerStores).toHaveBeenCalledTimes(1);
-    expect(storeService.closerStores).toHaveBeenCalledWith(cep);
+    expect(storeService.closerStores).toHaveBeenCalledWith(cep, pagination);
     expect(result).toEqual(mockResponse);
   });
 

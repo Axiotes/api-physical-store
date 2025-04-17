@@ -85,8 +85,15 @@ export class StoreController {
   @Get('closer/:cep')
   public async closerStores(
     @Param('cep', CepValidationPipe) cep: string,
-  ): Promise<StoreRoute[]> {
-    return await this.storeService.closerStores(cep);
+    @Query() pagination: PaginationDto,
+  ) {
+    const stores = await this.storeService.closerStores(cep, pagination);
+
+    return {
+      stores: stores,
+      pagination,
+      total: stores.length,
+    };
   }
 
   @ApiOperation({

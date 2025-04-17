@@ -19,11 +19,19 @@ export class StoreService {
     private readonly logisticUtilsService: LogisticUtilsService,
   ) {}
 
-  public async closerStores(cep: string): Promise<StoreRoute[]> {
+  public async closerStores(
+    cep: string,
+    pagination: PaginationDto,
+  ): Promise<StoreRoute[]> {
     const address: string = await this.geoUtilsService.getAddress(cep);
     const { lat, lng } = await this.geoUtilsService.getCoordinate(address);
 
-    const stores: StoreInterface[] = await this.storeRepository.find();
+    const stores: StoreInterface[] = await this.storeRepository
+      .createQueryBuilder('store')
+      .where('store.type = :type', { type: 'pdv' })
+      .skip(pagination.offset)
+      .take(pagination.limit)
+      .getMany();
 
     const storesRoutes: StoreRoute[] = await this.geoUtilsService.getDistance(
       { lat, lng },
