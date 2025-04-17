@@ -1,8 +1,8 @@
-import { Store } from 'src/modules/store/store.entity';
 import { RouteInfo } from './route-info.interface';
+import { StorePDV } from './store-pdv.interface';
 
 export interface StoreRoute {
-  store: Store;
+  store: StorePDV;
   distance: RouteInfo;
   duration: RouteInfo;
 }

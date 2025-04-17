@@ -51,6 +51,7 @@ export class StoreService {
 
     const stores: StoreInterface[] = await this.storeRepository
       .createQueryBuilder('store')
+      .where('store.type = :type', { type: 'pdv' })
       .skip(pagination.offset)
       .take(pagination.limit)
       .getMany();

@@ -335,6 +335,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),
@@ -486,6 +487,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),
@@ -612,6 +614,7 @@ describe('StoreService', () => {
     geoUtilsService.getAddress = jest.fn().mockResolvedValue(address);
     geoUtilsService.getCoordinate = jest.fn().mockResolvedValue(coordinate);
     const createQueryBuilderMock = {
+      where: jest.fn().mockReturnThis(),
       skip: jest.fn().mockReturnThis(),
       take: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(stores),
