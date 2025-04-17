@@ -12,33 +12,33 @@ export class Store {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   cep: string;
 
-  @Column()
+  @Column({ nullable: true })
   street: string;
 
-  @Column()
+  @Column({ nullable: true })
   city: string;
 
-  @Column()
+  @Column({ nullable: true })
   number: number;
 
-  @Column()
+  @Column({ nullable: true })
   neighborhood: string;
 
-  @Column()
+  @Column({ nullable: true })
   state: string;
 
-  @Column()
+  @Column({ nullable: true })
   uf: string;
 
-  @Column()
+  @Column({ nullable: true })
   region: string;
 
-  @Column()
+  @Column({ nullable: true })
   lat: string;
 
-  @Column()
+  @Column({ nullable: true })
   lng: string;
 }
