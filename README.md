@@ -27,7 +27,7 @@ API desenvolvida utilizando NEST, com objetivo gerenciar lojas físicas de um eC
 ### Processo de instalação e execução do projeto
 1. Clonar o repositório na sua máquina
     ```bash
-    git clone git@github.com:Axiotes/git@github.com:Axiotes/api-physical-store.git
+    git clone git@github.com:Axiotes/api-physical-store.git
     ```
 2. Entrar no diretório
     ```bash
